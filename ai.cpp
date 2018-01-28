@@ -11,8 +11,14 @@
 #ifndef INT_SIZE
 #define INT_SIZE 64
 #endif
+
+int get__x(int __y, int __x);
+void set__x(int __y, int __x, int value);
+#include <stdio.h>
+
+
 long long unsigned int* x = (long long unsigned int*) calloc(8, sizeof(long long unsigned int));
-int main(int argc, char*[] argv){
+int main(int argc, char** argv){
 	
 	set__x(0,0, black);
 printf("%d",get__x(0,0));
