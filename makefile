@@ -2,22 +2,20 @@ all: main
 
 #build
 main:
-	rm ./ai
+	rm -f ./ai
 	python3 ./bitarray.py ./ai.c ./ai.cpp
 	gcc ./ai.cpp -o ./ai
-	make cleanup #that recursive make call
+
 
 #build and run
 exec: main
 	echo
 	./ai
 
-cleanup:
-	rm ./*.cpp
-
 clean: cleanup
-	rm ./*.o
-
+	rm -f ./*.o
+	rm -f ./*.cpp
+	rm -f ./ai
 
 
 
