@@ -1,5 +1,17 @@
 #include <stdio.h>
 
+void checkBoard(){
+	int tiles = tiles
+	for(int i = 0; i < 15; i++){
+		for(int j = 0; j < 15; j++){
+			if((x[i][j] == 0) || (x[i][j] == 1) || (x[i][j] == 2)){
+				tiles += 1;
+			}
+		}
+	}
+	printf("%i \n", tiles);
+}
+
 bitarray[15*15*2] x;
 int main(int argc, char** argv){
 	
@@ -11,16 +23,4 @@ int main(int argc, char** argv){
 
 	printf("%d",x[0][0]);
 	checkBoard();
-}
-
-void checkBoard(){
-	int tiles = tiles
-	for(int i = 0; i < 15; i++){
-		for(int j = 0; j < 15; j++){
-			if((x[i][j] == 0) || (x[i][j] == 1) || (x[i][j] == 2)){
-				tiles += 1;
-			}
-		}
-	}
-	printf("%i \n", tiles);
 }
