@@ -10,6 +10,7 @@ int main(int argc, char** argv){
 	x[0][1] = black;
 
 	printf("%d",x[0][0]);
+	checkBoard();
 }
 
 void checkBoard(){
