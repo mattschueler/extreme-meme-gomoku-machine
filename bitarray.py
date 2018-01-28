@@ -180,7 +180,7 @@ def preprocess(inputfile, outputfile):
 	        new_line = line;
 	        #determine if the line "properly" uses the variable (a loose definition of "proper")
 	        if (line.count("[") == line.count("]")) and (line.count("]") >= 2) and (variable_name in line):
-	            #new_line = line.replace("\t"," ").replace("\n"," ").replace("   "," ").replace("  "," ")
+	            new_line = new_line.replace("==","%EQUALEQUAL%")#if we have ==, then we MUST be getting where we may otherwise detect setting, so temporarily replace it with a marker
 
 	            #make sure the variable usage is the type we are looking for
 	            if new_line[new_line.index(variable_name)+len(variable_name)] != "[":
@@ -189,7 +189,6 @@ def preprocess(inputfile, outputfile):
 	                continue
 	            
 	            #determine if we will be setting or getting a bitarray value
-	            new_line = new_line.replace("==","%EQUALEQUAL%")#if we have ==, then we MUST be getting where we may otherwise detect setting, so temporarily replace it with a marker
 	            
 
 	            #we _must be_ "get"ting, as there is no equal sign in this line
