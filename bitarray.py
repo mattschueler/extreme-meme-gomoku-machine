@@ -1,10 +1,16 @@
+#!/usr/bin/python
 #Created by Jacob "qwertey6" Kaplan for Artificial Intelligence at WPI.
 #This is a C pre-processor which allows you to create bit arrays as a primitive type.
+import os.path
+import sys
 import math
 
 BIT_ARRAY_TYPE = "long long unsigned int"
 
 COMMON_CODE_FOR_INSERTION ="""
+#ifndef _STDLIB_H
+#include <stdlib.h>
+#endif
 #define unfilled 0
 #define white 1
 #define black 2
@@ -18,20 +24,20 @@ COMMON_CODE_FOR_INSERTION ="""
 
 #we will write custom functions for each bitarray, reducing lookups, and leaving our lookups virtually one dimensional.
 DYNAMIC_CODE_FOR_INSERTION = """
-inline int get__{BITARRAY_ID}(int y, int x){
+inline int get__{BITARRAY_ID}(int __y, int __x){
     //which int we will look at for retrieving the bitarray value
-    int intID = (x*BLOCK_SIZE + y)/INT_SIZE;
+    int intID = (__x*BLOCK_SIZE + __y)/INT_SIZE;
 
     //how many bits we will shift our selector before grabbing our bits
-    int intoffset = (x*BLOCK_SIZE + y)%9;
+    int intoffset = (__x*BLOCK_SIZE + __y) % INT_SIZE;
     return ({BITARRAY_ID}[intID] & (3 << intoffset)) >> intoffset;
 };
-inline void set__{BITARRAY_ID}(int y, int x, int value){
+inline void set__{BITARRAY_ID}(int __y, int __x, int value){
     //which int we will look at for setting the bitarray value
-    int intID = (x*BLOCK_SIZE + y)/INT_SIZE;
+    int intID = (__x*BLOCK_SIZE + __y)/INT_SIZE;
 
     //how many bits we will shift our selector before grabbing our bits
-    int intoffset = (x*BLOCK_SIZE + y)%9;
+    int intoffset = (__x*BLOCK_SIZE + __y) % INT_SIZE;
     {BITARRAY_ID}[intID] = ({BITARRAY_ID}[intID] & ~(3 << intoffset)) | (value & (3 << intoffset));
 };
 """.replace("){","){{").replace("};","}};")#the replace statements escape the braces for python (removed on finish)
@@ -92,7 +98,7 @@ def preprocess(inputfile, outputfile):
         # add an entry to the dictionary of the variable, and how many long long uints it requires to be stored.
         bitarrays[var_ID] = {'BITARRAY_ID':checked_line[1], 'NUM_LONGS':math.ceil(eval(between(checked_line[0],'[',']'))/64)}
 
-        REPLACEMENT = (BIT_ARRAY_TYPE+"* {BITARRAY_ID} = ("+BIT_ARRAY_TYPE+"*) (calloc({NUM_LONGS}, sizeof("+BIT_ARRAY_TYPE+"));\n").format(**bitarrays[var_ID])
+        REPLACEMENT = (BIT_ARRAY_TYPE+"* {BITARRAY_ID} = ("+BIT_ARRAY_TYPE+"*) calloc({NUM_LONGS}, sizeof("+BIT_ARRAY_TYPE+"));\n").format(**bitarrays[var_ID])
         
         code = tail + REPLACEMENT + head
 
@@ -209,12 +215,15 @@ def preprocess(inputfile, outputfile):
     #at this point, we have fully functional C code.
     CODE = ';\n'.join(code).replace("%OPENCURLY%","{").replace("%CLOSECURLY%;","}")
 
-    FINAL_DYNAMIC_CODE = COMMON_CODE_FOR_INSERTION
+    FINAL_DYNAMIC_CODE = ""
     for x in bitarrays:
         FINAL_DYNAMIC_CODE = FINAL_DYNAMIC_CODE + DYNAMIC_CODE_FOR_INSERTION.format(**bitarrays[x])
 
-    FINAL_CODE = FINAL_DYNAMIC_CODE + CODE 
+    FINAL_CODE = COMMON_CODE_FOR_INSERTION + CODE + FINAL_DYNAMIC_CODE
 
-    with open(outfile, mode="w") as outfile:
+    with open(outputfile, mode="w") as outfile:
         outfile.write(FINAL_CODE)
         outfile.close()
+
+if __name__ == '__main__':
+	preprocess(sys.argv[1], sys.argv[2])
