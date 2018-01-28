@@ -11,6 +11,12 @@
 #ifndef INT_SIZE
 #define INT_SIZE 64
 #endif
+long long unsigned int* x = (long long unsigned int*) calloc(8, sizeof(long long unsigned int));
+int main(int argc, char*[] argv){
+	
+	set__x(0,0, black);
+printf("%d",get__x(0,0));
+}
 
 inline int get__x(int __y, int __x){
     //which int we will look at for retrieving the bitarray value
@@ -28,7 +34,3 @@ inline void set__x(int __y, int __x, int value){
     int intoffset = (__x*BLOCK_SIZE + __y) % INT_SIZE;
     x[intID] = (x[intID] & ~(3 << intoffset)) | (value & (3 << intoffset));
 };
-long long unsigned int* x = (long long unsigned int*) calloc(8, sizeof(long long unsigned int));
-set__x(0,0, black);
-printf("%d",get__x(0,0));
-}
