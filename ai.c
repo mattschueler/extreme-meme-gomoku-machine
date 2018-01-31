@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define EMPTY 0
 #define WHITE 1
@@ -31,9 +32,13 @@ int main(int argc, char** argv){
 	printf("%d",board[0][0]);
 	checkBoard();
 */
-	if (fopen("groupname.go", "r") != NULL) {
-		printf("turnfile was found\n");
-	} else {
-		printf("turnfile was not found\n");
+	while(1) {
+		if (fopen("groupname.go", "r") != NULL) {
+			printf("turnfile was found\n");
+			break;
+		} else {
+			printf("turnfile was not found\n");
+			sleep(5);
+		}
 	}
 }
