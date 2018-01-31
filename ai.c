@@ -7,7 +7,7 @@
 #define BOARD_SIZE 15
 
 char board[BOARD_SIZE][BOARD_SIZE] = {0};
-
+/*
 void checkBoard(){
 	int tiles = 0;
 	for(int i = 0; i < 15; i++){
@@ -19,9 +19,9 @@ void checkBoard(){
 	}
 	printf("%i \n", tiles);
 }
-
+*/
 int main(int argc, char** argv){
-
+/*
 	board[0][0] = BLACK;
 	board[1][4] = WHITE;
 	board[2][6] = BLACK;
@@ -30,4 +30,10 @@ int main(int argc, char** argv){
 
 	printf("%d",board[0][0]);
 	checkBoard();
+*/
+	if (fopen("groupname.go", "r") != NULL) {
+		printf("turnfile was found\n");
+	} else {
+		printf("turnfile was not found\n");
+	}
 }
