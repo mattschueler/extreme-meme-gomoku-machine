@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #define EMPTY 0
 #define WHITE 1
@@ -33,22 +34,28 @@ int main(int argc, char** argv){
 	checkBoard();
 */
 while(1) {
+	// check for move file
 	FILE *tf = fopen("meme-machine.go", "r");
 	if (tf != NULL) {
-		printf("turnfile was found\n");
+		// get opponent move
 		FILE *mv = fopen("move_file","r+");
-		/*char opp_move_buf[256] = {0};
-		fgets(mv, opp_move_buf);*/
+		char opp_move_buf[256] = {0};
+		fgets(opp_move_buf, 256, mv);
+		printf("opponent move: %s\n", opp_move_buf);
+		fseek(mv, 0, SEEK_SET);
+		fclose(mv);
+
+		// write our move
+		mv = fopen("move_file","w");
 		char move_buf[256] = {0};
-		sprintf(move_buf, "meme-machine %c %i", 'A', 12);
-		fputs(move_buf, mv);
+		sprintf(move_buf, "meme-machine %c %i\n", 'A', 12);
+		fwrite(move_buf, strlen(move_buf), 1, mv);
 		fclose(mv);
 		remove("meme-machine.go");
 		fclose(tf);
 		sleep(0.25);
 	} else {
-		printf("turnfile was not found\n");
-		sleep(5);
+		sleep(0.25);
 	}
 }
 }
