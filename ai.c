@@ -1,38 +1,24 @@
+#include "ai.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
-#define EMPTY 0
-#define WHITE 1
-#define BLACK 2
-#define BOARD_SIZE 15
+struct tile board[BOARD_SIZE][BOARD_SIZE];
 
-char board[BOARD_SIZE][BOARD_SIZE] = {0};
-/*
 void checkBoard(){
-	int tiles = 0;
-	for(int i = 0; i < 15; i++){
-		for(int j = 0; j < 15; j++){
-			if((board[i][j] == 0) || (board[i][j] == 1) || (board[i][j] == 2)){
-				tiles += 1;
+	int i;
+	for(i = 0; i < 15; i++){
+		int j;
+		for(j = 0; j < 15; j++){
+			if((board[i][j].color == WHITE) || (board[i][j].color == BLACK)){
+				printf("%d tile at %d, %d\n", board[i][j].color, i, j);
 			}
 		}
 	}
-	printf("%i \n", tiles);
 }
-*/
-int main(int argc, char** argv){
-/*
-	board[0][0] = BLACK;
-	board[1][4] = WHITE;
-	board[2][6] = BLACK;
-	board[2][7] = BLACK;
-	board[0][1] = BLACK;
 
-	printf("%d",board[0][0]);
-	checkBoard();
-*/
+int main(int argc, char** argv){
 while(1) {
 	// check for move file
 	FILE *eg = fopen("end_game", "r");
