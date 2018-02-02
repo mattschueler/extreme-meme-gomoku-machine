@@ -42,12 +42,17 @@ while(1) {
 	FILE *tf = fopen("meme_machine.go", "r");
 	if (tf != NULL) {
 		// get opponent move
-		FILE *mv = fopen("move_file","r+");
-		char opp_move_buf[256] = {0};
-		fgets(opp_move_buf, 256, mv);
-		printf("opponent move: %s\n", opp_move_buf);
-		fseek(mv, 0, SEEK_SET);
-		fclose(mv);
+		FILE *mv = fopen("move_file","r");
+		if (mv != NULL) {
+			char opp_move_buf[256] = {0};
+			fgets(opp_move_buf, 256, mv);
+			printf("opponent move: %s\n", opp_move_buf);
+			fseek(mv, 0, SEEK_SET);
+			fclose(mv);
+		} else {
+			printf("move file not found?\n");
+			exit(1);
+		}
 
 		// write our move
 		mv = fopen("move_file","w");
