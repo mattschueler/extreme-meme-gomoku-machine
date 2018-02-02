@@ -2,15 +2,16 @@ all: main
 
 #build
 main:
-	rm -f ./ai
-	gcc ./ai.c -o ./ai
+	mkdir -p arena
+	rm -f ./arena/ai
+	gcc ./ai.c -o ./arena/ai
 
 
 #build and run
 exec: main
 	echo
-	./ai
+	./arena/ai
 
 clean:
 	rm -f ./*.o
-	rm -f ./ai
+	rm -f ./arena/ai
