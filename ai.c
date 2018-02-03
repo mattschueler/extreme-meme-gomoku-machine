@@ -1,11 +1,12 @@
 #include "ai.h"
+#include "assign_weights.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
 char board[BOARD_SIZE][BOARD_SIZE] = {'\0'};
-const char we_are = WHITE;// assume we are the white player be default (?)
+const char we_are = WHITE;// assume we are the white player by default (?)
 
 void init_board(){
 	for(int i=0; i<BOARD_SIZE; i++){
@@ -17,6 +18,7 @@ void init_board(){
 
 int main(int argc, char** argv) {
 	while(1) {
+		print_board(board);
 		// check for move file
 		FILE *eg = fopen("end_game", "r");
 		if (eg != NULL) {
@@ -33,7 +35,7 @@ int main(int argc, char** argv) {
 				fseek(mv, 0, SEEK_SET);
 				fclose(mv);
 			} else {
-				printf("move file not found?\n");
+				redprint("ERROR: move file not found?\n");
 				exit(1);
 			}
 
