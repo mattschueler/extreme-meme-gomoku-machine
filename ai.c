@@ -24,13 +24,14 @@ int main(int argc, char** argv) {
 		}
 		FILE *tf = fopen("meme_machine.go", "r");
 		if (tf != NULL) {
+			fclose(tf);
+
 			// get opponent move
 			FILE *mv = fopen("move_file","r");
 			if (mv != NULL) {
 				char opp_move_buf[256] = {0};
 				fgets(opp_move_buf, 256, mv);
 				printf("opponent move: %s\n", opp_move_buf);
-				fseek(mv, 0, SEEK_SET);
 				fclose(mv);
 			} else {
 				printf("move file not found?\n");
@@ -43,9 +44,7 @@ int main(int argc, char** argv) {
 			sprintf(move_buf, "meme_machine %c %i\n", 'A', 12);
 			fwrite(move_buf, strlen(move_buf), 1, mv);
 			fclose(mv);
-			remove("meme_machine.go");
-			fclose(tf);
-			sleep(0.25);
+			sleep(1);
 		} else {
 			sleep(0.25);
 		}
