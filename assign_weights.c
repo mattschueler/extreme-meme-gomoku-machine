@@ -1,33 +1,4 @@
-#include <string.h> //for string comprehension and memset
-#include <unistd.h> //for read and close
-#include <sys/types.h> // for type declarations
-#include <sys/stat.h> // for mode constants
-#include <fcntl.h> //for O_* constants
-#include <stdio.h> //for printing
-#include <stdlib.h> //for malloc
-#include <semaphore.h> // for sempahores
-#include <pthread.h> // for threads
-#include <sys/time.h> //for time
-#include <sys/mman.h> // for mmap
-
-#define RED   "\x1B[31m"
-#define CYAN   "\x1B[36m" // fancy color FONT markers
-#define GREEN   "\x1B[32m"
-#define ORANGE "\x1B[33m"
-#define RESET "\x1B[0m"
-
-#define    redprint(str, ...) fprintf(stderr,    RED str RESET, ##__VA_ARGS__)
-#define   cyanprint(str, ...) fprintf(stderr,   CYAN str RESET, ##__VA_ARGS__)
-#define  greenprint(str, ...) fprintf(stderr,  GREEN str RESET, ##__VA_ARGS__)
-#define orangeprint(str, ...) fprintf(stderr, ORANGE str RESET, ##__VA_ARGS__)
-
-#define GREY "\x1B[40m" //dark grey background
-#define BLACK_F "\x1B[1m" //black font
-#define WHITE_F "\x1B[1;37m" //white font
-
-#define blackprint(str, ...) fprintf(stderr, GREY BLACK_F str RESET, ##__VA_ARGS__)
-#define whiteprint(str, ...) fprintf(stderr, GREY WHITE_F str RESET, ##__VA_ARGS__)
-
+#include "ai.h"
 
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	for(int i=0; i<BOARD_SIZE; i++){
@@ -51,7 +22,7 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 
 
 void assign_weights(char board){
-	
+
 	if(we_are == WHITE){
 		char enemy = BLACK;
 	}else{
@@ -99,7 +70,7 @@ void assign_weights(char board){
 					board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
 				}
 
-			}		
+			}
 		}
 	}
 }
