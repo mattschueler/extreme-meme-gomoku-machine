@@ -47,8 +47,7 @@ int main(int argc, char** argv) {
 			fclose(tf);
 			sleep(0.25);
 		} else {
-			printf("move file not found?\n");
-			exit(1);
+			sleep(0.25);
 		}
 	}
 }
