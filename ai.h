@@ -41,7 +41,7 @@
 /* Tile Struct */
 struct tile {
 	/* Marker for color */
-	int color;
+	char status;
 	/* Marker for the value of the tile based on heurstic */
-	int value;
+	short value;
 } tile;
