@@ -4,6 +4,25 @@
 #include <unistd.h>
 #include <string.h>
 
+//#define USE_TILES
+
+#ifndef USE_TILES
+
+char board[BOARD_SIZE][BOARD_SIZE] = {'\0'};
+
+const char we_are = WHITE;// assume we are the white player be default (?)
+
+void init_board(){
+	for(int i=0; i<BOARD_SIZE; i++){
+		for(int j=0; j<BOARD_SIZE; j++){
+		board[i][j] = EMPTY;
+		}
+	}
+}
+
+#endif
+#ifdef USE_TILES
+
 struct tile board[BOARD_SIZE][BOARD_SIZE];
 
 void checkBoard(){
@@ -17,6 +36,8 @@ void checkBoard(){
 		}
 	}
 }
+
+#endif
 
 int main(int argc, char** argv){
 while(1) {
