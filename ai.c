@@ -31,7 +31,10 @@ int main(int argc, char** argv) {
 			if (mv != NULL) {
 				char opp_move_buf[256] = {0};
 				fgets(opp_move_buf, 256, mv);
-				printf("opponent move: %s\n", opp_move_buf);
+				strtok(opp_move_buf, " ");
+				char *row = strtok(NULL, " ");
+				char *col = strtok(NULL, " ");
+				printf("opponent move: %s %s\n", row, col);
 				fclose(mv);
 			} else {
 				printf("move file not found?\n");
@@ -41,6 +44,7 @@ int main(int argc, char** argv) {
 			// write our move
 			mv = fopen("move_file","w");
 			char move_buf[256] = {0};
+			// DO THE MINIMAX HERE
 			sprintf(move_buf, "meme_machine %c %i\n", 'A', 12);
 			fwrite(move_buf, strlen(move_buf), 1, mv);
 			fclose(mv);
