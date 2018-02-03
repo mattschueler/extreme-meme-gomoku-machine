@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <string.h>
 
-<<<<<<< HEAD
 //#define USE_TILES
 
 #ifndef USE_TILES
@@ -25,9 +24,6 @@ void init_board(){
 #ifdef USE_TILES
 
 struct tile board[BOARD_SIZE][BOARD_SIZE];
-=======
-struct tile **board;
->>>>>>> master
 
 void initBoard() {
 	board = (tile **)malloc(BOARD_SIZE * sizeof(tile *));
@@ -39,27 +35,7 @@ void initBoard() {
 		}
 	}
 }
-
-<<<<<<< HEAD
 #endif
-
-int main(int argc, char** argv){
-while(1) {
-	// check for move file
-	FILE *eg = fopen("end_game", "r");
-	if (eg != NULL) {
-		exit(0);
-=======
-void checkBoard() {
-	for(int i = 0; i < BOARD_SIZE; i++){
-		for(int j = 0; j < BOARD_SIZE; j++){
-			if((board[i][j].status == WHITE) || (board[i][j].status == BLACK)){
-				printf("%d tile at %d, %d\n", board[i][j].status, i, j);
-			}
-		}
->>>>>>> master
-	}
-}
 
 int main(int argc, char** argv) {
 	while(1) {
