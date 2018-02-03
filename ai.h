@@ -36,12 +36,3 @@
 #define WHITE 1
 #define BLACK 2
 #define BOARD_SIZE 15
-
-
-/* Tile Struct */
-struct tile {
-	/* Marker for color */
-	char status;
-	/* Marker for the value of the tile based on heurstic */
-	short value;
-} tile;
