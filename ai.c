@@ -7,10 +7,10 @@
 char board[BOARD_SIZE][BOARD_SIZE] = {'\0'};
 const char we_are = WHITE;// assume we are the white player be default (?)
 
-void init_board(){
-	for(int i=0; i<BOARD_SIZE; i++){
-		for(int j=0; j<BOARD_SIZE; j++){
-		board[i][j] = EMPTY;
+void init_board() {
+	for(int i=0; i<BOARD_SIZE; i++) {
+		for(int j=0; j<BOARD_SIZE; j++) {
+			board[i][j] = EMPTY;
 		}
 	}
 }
@@ -19,16 +19,16 @@ int main(int argc, char** argv) {
 	while(1) {
 		// check for move file
 		FILE *eg = fopen("end_game", "r");
-		if (eg != NULL) {
+		if(eg != NULL) {
 			exit(0);
 		}
 		FILE *tf = fopen("meme_machine.go", "r");
-		if (tf != NULL) {
+		if(tf != NULL) {
 			fclose(tf);
 
 			// get opponent move
 			FILE *mv = fopen("move_file","r");
-			if (mv != NULL) {
+			if(mv != NULL) {
 				char opp_move_buf[256] = {0};
 				fgets(opp_move_buf, 256, mv);
 				strtok(opp_move_buf, " ");
