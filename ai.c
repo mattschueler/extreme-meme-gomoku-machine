@@ -35,7 +35,6 @@ int main(int argc, char** argv) {
 	init_board();
 	strcpy(TEAMNAME, argv[1]);
 	while(1) {
-		print_board(board);
 		// check for move file
 		FILE *eg = fopen("end_game", "r");
 		if(eg != NULL) {
@@ -81,6 +80,7 @@ int main(int argc, char** argv) {
 			mv = fopen("move_file","w");
 			fwrite(move_buf, strlen(move_buf), 1, mv);
 			fclose(mv);
+			print_board(board);
 			sleep(1);
 		} else {
 			sleep(0.25);
