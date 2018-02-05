@@ -62,6 +62,8 @@ int main(int argc, char** argv) {
 					char *oppRow = strtok(NULL, " ");
 					board[atoi(oppRow)-1][oppCol[0]-97] = (we_are%2) ? BLACK : WHITE;
 					printf("opponent move: %c %d\n", oppCol[0], atoi(oppRow));
+				} else {
+					we_are = WHITE;
 				}
 			} else {
 				redprint("ERROR: move file not found?\n");
