@@ -1,4 +1,5 @@
 #include "ai.h"
+#define no_print
 
 struct slices {
 	char horizontal[9];
@@ -7,6 +8,7 @@ struct slices {
 	char   neg_diag[9];
 } typedef slices;
 
+#ifndef no_print
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
 	for(i=0; i<BOARD_SIZE; i++){
@@ -26,6 +28,8 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 		}
 	}
 	printf("\n");
+	fflush(stdout);
+	reset_print_board(board);
 }
 void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
@@ -35,8 +39,11 @@ void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 			printf("\b");
 		}
 	}
-	printf("\b");
 }
+#else
+void print_board(char board[BOARD_SIZE][BOARD_SIZE]){return;}
+void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]){return;}
+#endif
 
 
 void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
@@ -116,7 +123,7 @@ void sliceSubstringResolver(char* superstring, int x, int y, int setting){
 		int newx = x - (4 - start);
 		int newy = y - (4 - start);
 		/* Grab the next 5 characters and put them into the substring. */
-		for(a = start, b = 0; a < start + 4, b < 5; a++, b++){
+		for(a = start, b = 0; (a<start+4) && (b<5); a++, b++){
 			substring[b] = superstring[a];
 			/* Now that we have the substring, test it w/ find pattern. */
 			int pat = findPattern(substring);

@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
 
 	if(argc<2){
 		redprint("ERROR: MUST SUPPLY A TEAMNAME\n");
+		exit(1);
 	}
 
 	strcpy(TEAMNAME, argv[1]);
