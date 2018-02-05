@@ -33,6 +33,11 @@ void getMove(int *col, int *row) {
 
 int main(int argc, char** argv) {
 	init_board();
+
+	if(argc<2){
+		redprint("ERROR: MUST SUPPLY A TEAMNAME\n");
+	}
+
 	strcpy(TEAMNAME, argv[1]);
 	while(1) {
 		// check for move file
