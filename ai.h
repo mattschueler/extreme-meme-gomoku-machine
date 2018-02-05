@@ -40,5 +40,8 @@
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]);
+void sliceSubstringResolver(char* superstring, int x, int y, int setting);
+int findPattern(char* string);
+void setWeights(int pattern, int x, int y, int setting);
 
 char board[BOARD_SIZE][BOARD_SIZE];
