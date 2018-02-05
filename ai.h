@@ -36,3 +36,4 @@
 #define WHITE 1
 #define BLACK 2
 #define BOARD_SIZE 15
+//#define TEAMNAME "meme_machine"
