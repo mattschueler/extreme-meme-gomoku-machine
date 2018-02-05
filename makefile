@@ -4,13 +4,17 @@ all: main
 main:
 	mkdir -p arena
 	rm -f ./arena/ai
-	gcc ./ai.c -o ./arena/ai
+	gcc -g -Wall ./ai.c -o ./arena/ai
 
 
 #build and run
 exec: main
 	echo
 	./arena/ai
+
+
+gdb: main
+	gdb ./arena/ai
 
 clean:
 	rm -f ./*.o
