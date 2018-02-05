@@ -36,4 +36,9 @@
 #define WHITE 1
 #define BLACK 2
 #define BOARD_SIZE 15
-//#define TEAMNAME "meme_machine"
+
+void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
+void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]);
+void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]);
+
+char board[BOARD_SIZE][BOARD_SIZE];

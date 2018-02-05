@@ -1,10 +1,10 @@
 #include "ai.h"
+#include "assign_weights.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
-char board[BOARD_SIZE][BOARD_SIZE] = {'\0'};
 char we_are = EMPTY;
 char TEAMNAME[32] = {0};
 
@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
 	init_board();
 	strcpy(TEAMNAME, argv[1]);
 	while(1) {
+		print_board(board);
 		// check for move file
 		FILE *eg = fopen("end_game", "r");
 		if(eg != NULL) {
@@ -63,7 +64,7 @@ int main(int argc, char** argv) {
 					printf("opponent move: %c %d\n", oppCol[0], atoi(oppRow));
 				}
 			} else {
-				printf("move file not found?\n");
+				redprint("ERROR: move file not found?\n");
 				exit(1);
 			}
 
