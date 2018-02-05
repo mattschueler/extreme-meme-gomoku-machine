@@ -45,3 +45,4 @@ int findPattern(char* string);
 void setWeights(int pattern, int x, int y, int setting);
 
 char board[BOARD_SIZE][BOARD_SIZE];
+int weights[BOARD_SIZE][BOARD_SIZE];

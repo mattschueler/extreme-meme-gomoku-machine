@@ -15,6 +15,22 @@ void init_board() {
 			board[i][j] = EMPTY;
 		}
 	}
+	initWeights();
+}
+
+void initWeights(){
+	int i, j;
+	for(i = 0; i < BOARD_SIZE; i++){
+		for(j = 0; j < BOARD_SIZE; j++){
+			weights[i][j] = 1;
+		}
+	}
+	for(i = 4; i < BOARD_SIZE-5; i++){
+		for(j = 4; j < BOARD_SIZE-5; j++){
+			weights[i][j] = 4;
+		}
+	}
+	
 }
 
 void getMove(int *col, int *row) {
