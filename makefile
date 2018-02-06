@@ -16,10 +16,13 @@ exec: main
 gdb: main
 	gdb ./arena/ai moku
 
-game: main
+game: clean main
+	python ./WPI.CS4341/gomoku/referee.py moku enemy
 	./arena/ai moku &
 	./arena/ai enemy &
-	python ./WPI.CS4341/gomoku/referee.py moku enemy
+
+ref:
+	git clone https://github.com/samogden/WPI.CS4341.git
 
 clean:
 	rm -f ./*.o

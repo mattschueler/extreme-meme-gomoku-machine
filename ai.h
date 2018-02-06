@@ -1,3 +1,5 @@
+#ifndef AI_H
+#define AI_H
 #include <string.h> //for string comprehension and memset
 #include <unistd.h> //for read and close
 #include <sys/types.h> // for type declarations
@@ -37,12 +39,28 @@
 #define BLACK 2
 #define BOARD_SIZE 15
 
+struct slices {
+	char horizontal[9];
+	char   vertical[9];
+	char   pos_diag[9];
+	char   neg_diag[9];
+} typedef slices;
+
+
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]);
-void sliceSubstringResolver(char* superstring, int x, int y, int setting);
-int findPattern(char* string);
-void setWeights(int pattern, int x, int y, int setting);
+int sliceResolver(slices considerations);
+void streplace(char* string, int len, char find, char replace);
+void strswap(char* string, int len, char a, char b);
+void streverse(char* string, int len);
+void roll(char* string, int len);
+int findWeight(char* string);
 
 char board[BOARD_SIZE][BOARD_SIZE];
+char we_are;
 int weights[BOARD_SIZE][BOARD_SIZE];
+
+
+#endif
+
