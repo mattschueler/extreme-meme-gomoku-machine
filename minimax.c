@@ -1,3 +1,9 @@
+
+int abEval(struct Board b, int** moves, char curr_player){
+	int curply = curr_player - '0';
+	int max = ( % 2); /* If we're an even number we're max. */
+
+}
 #ifndef MINIMAX
 #define MINIMAX
 #include "minimax.h"
@@ -65,6 +71,11 @@ void getBestMoves(Board b, int **moves) {
 			}
 		}
 	}
+}
+
+int abEval(struct Board b, int** moves, char curr_player){
+	int curply = curr_player - '0';
+	int max = ( % 2); /* If we're an even number we're max. */
 }
 
 Board haveChild(Board parent) {
