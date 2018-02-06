@@ -2,36 +2,46 @@
 #include "assign_weights.c"
 
 int i = 0;
+int mmdepth = 5;
 
 void dlminimax(struct Board b){
-	int whoturn = 1; /* 0 for us, 1 for the enemy. */
+	int whoturn = 0; /* 0 us, 1 enemy */
 	int m;
-	char** gamestate = b.board;
 	assign_weights(b); /* Now b.weights should be a list of all the weights. */
-	int moves[10][2] = getBestMoves(gamestate);
+	int** moves = getBestMoves(b);
 	i++;
-	for(m = 0; m < 10 , i < MINIMAX_DEPTH; m++){
-		int tempmove[2] = moves[m];
+	for(m = 0; m < 10 , i < mmdepth; m++){
+		int** tempmove = moves[m];
 		Board child = haveChild(b);
-
-		dlminimax();
+		int x = tempmove[1];
+		int y = tempmove[2];
+		if(whoturn = we_are){
+			child.board[x][y] = we_are;
+			whoturn += 1;
+		}
+		else{
+			child.board[x][y] = we_are;
+			whoturn -= 1;
+		}
+		dlminimax(child);
 	}
 }
 
 int** getBestMoves(struct Board b){
 	int moveset[10][3] = {-1,-1,-100000}; // x coord, y coord, score
-	for(int i=0; i<BOARD_SIZE; i++) {
-		for(int j=0; j<BOARD_SIZE; j++) {
-			for(int k=0; k<10; k++) {
-				if(board.weights[i][j]>moveset[k][2]) {
-					for(int l=10; l>k; l--) {
+	int i, j, k, l;
+	for(i=0; i<BOARD_SIZE; i++) {
+		for(j=0; j<BOARD_SIZE; j++) {
+			for(k=0; k<10; k++) {
+				if(b.weights[i][j]>moveset[k][2]) {
+					for(l=10; l>k; l--) {
 						moveset[l][0] = moveset[l-1][0];
 						moveset[l][1] = moveset[l-1][1];
 						moveset[l][2] = moveset[l-1][2];
 					}
 					moveset[k][0] = i;
 					moveset[k][1] = j;
-					moveset[k][2] = board.weights[i][j];
+					moveset[k][2] = b.weights[i][j];
 				}
 			}
 		}
@@ -57,6 +67,6 @@ Board haveChild(struct Board parent){
 		}
 	}
 	/* Set best move. */
-	board.bestmove = getBestMoves(child);
-	board.dont = 0; /* Starts out not pruned. */
+	child.bestmove = parent.bestmove;
+	child.dont = 0; /* Starts out not pruned. */
 }

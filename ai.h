@@ -47,8 +47,8 @@ struct slices {
 } typedef slices;
 
 struct Board {
-	struct Board *parent; /* Parent of this board. */
-	struct Board *children; /* Children of this board. */
+	struct Board* parent; /* Parent of this board. */
+	struct Board* children; /* Children of this board. */
 	int alpha, beta;
 
 	char board[BOARD_SIZE][BOARD_SIZE]; /* A snapshot of the current board. */
@@ -66,6 +66,8 @@ void strswap(char* string, int len, char a, char b);
 void streverse(char* string, int len);
 void roll(char* string, int len);
 int findWeight(char* string);
+Board haveChild(struct Board b);
+int** getBestMoves(struct Board b);
 
 char we_are = EMPTY;
 char enemy_is = EMPTY;

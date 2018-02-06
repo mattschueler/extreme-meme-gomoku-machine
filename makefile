@@ -5,7 +5,7 @@ main:
 	mkdir -p arena
 	rm -f ./arena/ai
 	gcc -g -Wall ./ai.c -o ./arena/ai
-
+	gcc -g ./minimax.c -o ./minimax
 
 #build and run
 exec: main
