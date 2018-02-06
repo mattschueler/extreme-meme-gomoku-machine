@@ -9,7 +9,7 @@
 char TEAMNAME[32] = {0};
 Board globalBoard = {0};
 
-void initWeights(struct Board board){
+void initWeights(Board board){
 	int i, j;
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
@@ -24,7 +24,7 @@ void initWeights(struct Board board){
 }
 
 
-void init_board(struct Board board) {
+void init_board(Board board) {
 	board.parent = NULL;
 	board.children = NULL;
 	board.alpha = -100000;
@@ -40,7 +40,7 @@ void init_board(struct Board board) {
 }
 
 
-void getMove(struct Board board, int *col, int *row) {
+void getMove(Board board, int *col, int *row) {
 	int i,j;
 	int tempCols[BOARD_SIZE*BOARD_SIZE] = {-1};
 	int tempRows[BOARD_SIZE*BOARD_SIZE] = {-1};
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 			greenprint("GAME EXITED");
 			exit(0);
 		}
-		char *fname = (char *)calloc(32,1);
+		char fname[32] = {0};
 		sprintf(fname, "%s.go", TEAMNAME);
 		FILE *tf = fopen(fname, "r");
 		if(tf != NULL) {

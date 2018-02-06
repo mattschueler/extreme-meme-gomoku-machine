@@ -76,7 +76,7 @@ char convert(char c){
 	}
 }
 
-void assign_weights(struct Board b){
+void assign_weights(Board b){
 /*
 	if(we_are == WHITE){
 		char enemy = BLACK;

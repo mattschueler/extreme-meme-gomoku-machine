@@ -3,7 +3,7 @@
 #include "minimax.h"
 
 // curr_player = 1 is us, = 0 is enemy
-int* dlminimax(struct Board b, char curr_player, int curr_depth) {
+int* dlminimax(Board b, char curr_player, int curr_depth) {
 	int **moves = calloc(sizeof(int *),10); /* For any minimax state we have a set of children to explore */
 	int i;
 	/* For a buffer of 10 moves, set them equal to presets. */
@@ -36,11 +36,12 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 			}
 		}
 	}
+
 	/* Return first thing in moves */
 	return moves[0];
 }
 
-void getBestMoves(struct Board b, int **moves) {
+void getBestMoves(Board b, int **moves) {
 	int i, j, k, l;
 	for(i=0; i<BOARD_SIZE; i++) {
 		for(j=0; j<BOARD_SIZE; j++) {
@@ -60,9 +61,9 @@ void getBestMoves(struct Board b, int **moves) {
 	}
 }
 
-struct Board haveChild(struct Board parent) {
+Board haveChild(Board parent) {
 	/* Initialize baby */
-	struct Board child = {0};
+	Board child = {0};
 	/* Set parameters */
 	child.parent = &parent;
 	child.children = NULL;
