@@ -41,23 +41,30 @@ void init_board(struct Board board) {
 
 void getMove(struct Board board, int *col, int *row) {
 	int i,j;
-	int tempCol = -1;
-	int tempRow = -1;
+	int tempCols[BOARD_SIZE*BOARD_SIZE] = {-1};
+	int tempRows[BOARD_SIZE*BOARD_SIZE] = {-1};
+	int range = 0;
 	int max = -1;
 	assign_weights(board);
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			if(( board.weights[i][j]>max )&&( board.board[i][j]==EMPTY )){
-				tempCol=i;
-				tempRow=j;
+				range = 0;
+				tempRows[range]=i;
+				tempCols[range]=j;
 				max = board.weights[i][j];
 			}
-
+			if((board.weights[i][j]==max)&&(board.board[i][j]==EMPTY)){
+				range++;
+				tempRows[range]=i;
+				tempCols[range]=j;
+			}
 		}
 	}
-	*col = tempCol;
-	*row = tempRow;
+	int which_move = rand()%range;
+	*col = tempCols[which_move];
+	*row = tempRows[which_move];
 }
 
 int main(int argc, char** argv) {
