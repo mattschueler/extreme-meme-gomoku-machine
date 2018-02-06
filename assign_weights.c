@@ -49,7 +49,7 @@ void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]){return;}
 #endif
 
 
-void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
+void assign_weights(struct Board board){
 /*
 	if(we_are == WHITE){
 		char enemy = BLACK;
@@ -60,7 +60,7 @@ void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
 	for(i=0; i<BOARD_SIZE; i++){
 		for(j=0; j<BOARD_SIZE; j++){
-			if(board[i][j] == EMPTY){
+			if(board.board[i][j] == EMPTY){
 				//if the board spot is empty, then it is a possible move for us/the enemy
 				int m,n;
 
@@ -71,7 +71,7 @@ void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
 					if(m<0){m=0;}//prevent under-bounds
 					if(m>BOARD_SIZE){break;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.vertical) = board[i][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
+					*(considerations.vertical) = board.board[i][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
 					(*(considerations.vertical))++;
 				}
 
@@ -80,7 +80,7 @@ void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
 					if(n<0){n=0;}//prevent under-bounds
 					if(n>BOARD_SIZE){break;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.horizontal) = board[n][j]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
+					*(considerations.horizontal) = board.board[n][j]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
 					(*(considerations.horizontal))++;
 				}
 
@@ -89,7 +89,7 @@ void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
 					if((n<0)||(m<0)){continue;}//prevent under-bounds (continuing will increment BOTH m and n simultaneously, keeping our constraint of m on n)
 					if((n>BOARD_SIZE)||(m>BOARD_SIZE)){continue;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.pos_diag) = board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
+					*(considerations.pos_diag) = board.board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
 					(*(considerations.pos_diag))++;
 				}
 
@@ -98,14 +98,14 @@ void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]){
 					if((n<0)||(m<0)){continue;}//prevent under-bounds (continuing will increment BOTH m and n simultaneously, keeping our constraint of m on n)
 					if((n>BOARD_SIZE)||(m>BOARD_SIZE)){continue;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.neg_diag) = board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
+					*(considerations.neg_diag) = board.board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
 					(*(considerations.neg_diag))++;
 				}
 
 				//convenient break-point for checking "considerations"
 				/* Logan likes C-style comments. */
 				/* Begin pattern recognition of slices and assign weights. */
-				weights[i][j] = sliceResolver(considerations);
+				board.weights[i][j] = sliceResolver(considerations);
 			}
 		}
 	}
@@ -202,19 +202,19 @@ int findWeight(char* string){
 			for(roll_attempts=5; roll_attempts>0; roll_attempts--){
 
 				/*0*/
-				if(strcmp(string,"EEEEE")){return 0;}	
-				
+				if(strcmp(string,"EEEEE")){return 0;}
+
 				/*1*/
 				else if(strcmp(string,"EEEEX")){return 2-inv;}
-				
+
 				/*2*/
 				else if(strcmp(string,"EEEXX")){return 16-inv;}
 				else if(strcmp(string,"EEXEX")){return 16-inv;}
-				
+
 				/*3*/
 				else if(strcmp(string,"EEXXX")){return 64-inv;}
 				else if(strcmp(string,"EXEXX")){return 64-inv;}
-				
+
 				/*4*/
 				else if(strcmp(string,"EXXXX")){return 1024-inv;}
 				/*---*/
@@ -239,10 +239,10 @@ int findWeight(char* string){
 
 				roll(string, 5);
 			}
-		
+
 		streverse(string, 5);//reverse the string
 		}
-		
+
 		strswap(string, 5, 'X','Y');
 		inv = 1;//if we had to inverse the search string to match, then we are looking at sub-optimal, potentially over-defensive moves, so we should subtract a bit of points to prefer aggressive, tie-breaking/game-winning moves.
 	}
