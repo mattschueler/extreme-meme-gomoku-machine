@@ -6,6 +6,12 @@
 int* dlminimax(Board b, char curr_player, int curr_depth) {
 	int **moves = calloc(sizeof(int *),10); /* For any minimax state we have a set of children to explore */
 	int i;
+	char next_player;
+	
+	if(curr_player == BLACK){
+		next_player = WHITE;
+	}else{next_player = BLACK;}
+
 	/* For a buffer of 10 moves, set them equal to presets. */
 	for(i=0; i<10; i++) {
 		moves[i] = calloc(sizeof(int), 3);
@@ -27,12 +33,12 @@ int* dlminimax(Board b, char curr_player, int curr_depth) {
 				/* Creat a child on the board. */
 				Board child = haveChild(b);
 				/* Set the location of the move to a tile of the current player. */
-				child.board[moves[m][0]][moves[m][1]] = curr_player ? we_are : enemy_is;
+				child.board[moves[m][0]][moves[m][1]] = curr_player;
 				/* Assign weights in the child board w/ new move added. */
 				assign_weights(child);
 
 				/* Recursively call this function on the child. */
-				moves[m] = dlminimax(child, !curr_player, curr_depth+1);
+				moves[m] = dlminimax(child, next_player, curr_depth+1);
 			}
 		}
 	}
