@@ -27,7 +27,7 @@ ref:
 clean:
 	rm -f ./*.o
 	rm -f ./arena/ai
-	rm *.go
-	rm end_game
-	rm move_file
-	rm history_file
+	rm -f *.go
+	rm -f end_game
+	rm -f move_file
+	rm -f history_file
