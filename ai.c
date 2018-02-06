@@ -29,6 +29,7 @@ void init_board(Board board) {
 	board.children = NULL;
 	board.alpha = -100000;
 	board.beta = 100000;
+	board.hasKids = 0;
 	int i, j;
 	for(i=0; i<BOARD_SIZE; i++) {
 		for(j=0; j<BOARD_SIZE; j++) {

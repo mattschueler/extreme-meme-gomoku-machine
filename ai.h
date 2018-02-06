@@ -50,7 +50,7 @@ struct slices {
 struct Board {
 	struct Board* parent; /* Parent of this board. */
 	struct Board* children; /* Children of this board. */
-	int alpha, beta;
+	int alpha, beta, hasKids;
 
 	char board[BOARD_SIZE][BOARD_SIZE]; /* A snapshot of the current board. */
 	int weights[BOARD_SIZE][BOARD_SIZE]; /* Set of weights accomanying the board. */

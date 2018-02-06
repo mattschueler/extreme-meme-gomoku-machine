@@ -16,7 +16,7 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	/* Scan board for the best moves and move them into the move buffer. */
 	getBestMoves(b, moves);
 	/* Before expanding, see if we need to prune. */
-	abEval(b, moves, curr_player);
+	b.dont = abEval(b, moves, curr_player);
 
 	/* Repeat this process for the children of these children; to a predefined depth. */
 	if(curr_depth <= MAX_DEPTH) {
@@ -60,10 +60,32 @@ void getBestMoves(struct Board b, int **moves) {
 	}
 }
 
-int abEval(struct Board b, int** moves, char curr_player){
-	int curply = curr_player - '0';
-	int max = ( % 2); /* If we're an even number we're max. */
-
+void abEval(struct Board b, int** moves, char curr_player){
+	int tempa = moves[0][2]; /* Highest possible value that max can get. */
+	int tempb = moves[0][2] * -1; /* Largest denial min can force on max. */
+	if(we_are == curr_player){
+		/* MAX */
+		if(tempa > b.parent.alpha){
+			/* We have a new alpha. */
+			b.parent.alpha = tempa;
+		}
+		else{
+			b.dont = 1;
+		}
+	}
+	else{
+		/* MIN */
+		if(tempb < b.parent.beta){
+			b.parent.beta = tempb;
+		}
+		else{
+			b.dont = 1;
+		}
+	}
+	/* Now pass that value up above */
+	if(b.parent != NULL){ /* If there's a parent. */
+		abEval(b.parent, moves, curr_player);
+	}
 }
 
 struct Board haveChild(struct Board parent) {
