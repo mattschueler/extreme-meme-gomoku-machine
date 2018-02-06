@@ -9,9 +9,9 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	/* For a buffer of 10 moves, set them equal to presets. */
 	for(i=0; i<10; i++) {
 		moves[i] = calloc(sizeof(int), 3);
-		moves[i][0] = -1;
-		moves[i][0] = -1;
-		moves[i][0] = -100000;
+		moves[i][0] = -1; /* X of the move. */
+		moves[i][0] = -1; /* Y of the move. */
+		moves[i][0] = -100000; /* Value of the move. */
 	}
 	/* Scan board for the best moves and move them into the move buffer. */
 	getBestMoves(b, moves);
@@ -26,6 +26,17 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 			child.board[moves[m][0]][moves[m][1]] = curr_player ? we_are : enemy_is;
 			/* Assign weights in the child board w/ new move added. */
 			assign_weights(child);
+
+			/* Now that we have our weights fully set up here, a-b pruning should go here. */
+			/* We'll need a check for whose turn it is, i.e. who is max and who is min. */
+			/* Max will be checking our Alpha, i.e. the largest number someone on the board can get. */
+			/* Min will look for the most valuable move on their turn. */
+				/* This is because our heuristic looks at both players and calculates the best move. */
+				/* So the best move for the opponent would be the worst move for us, Max. */
+			/* Alpha = best move on our turn. */
+			/* Beta = best move on their turn. */
+			/* If child Beta > child.child Alpha, don't expand the child. */
+
 			/* Recursively call this function on the child. */
 			moves[m] = dlminimax(child, !curr_player, curr_depth+1);
 		}
