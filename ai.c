@@ -6,6 +6,7 @@
 #include <string.h>
 
 char we_are = EMPTY;
+char enemy_is = EMPTY;
 char TEAMNAME[32] = {0};
 
 void initWeights(){
@@ -19,7 +20,7 @@ void initWeights(){
 		for(j = 4; j < BOARD_SIZE-5; j++){
 			weights[i][j] = 4;
 		}
-	}	
+	}
 }
 
 void init_board() {
@@ -39,6 +40,7 @@ void getMove(int *col, int *row) {
 	int tempRow = -1;
 	int max = -1;
 	assign_weights(board);
+	print_board(weights);
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
@@ -47,7 +49,7 @@ void getMove(int *col, int *row) {
 				tempRow=j;
 				max = weights[i][j];
 			}
-	
+
 		}
 	}
 	*col = tempCol;
@@ -85,14 +87,16 @@ int main(int argc, char** argv) {
 				if(strlen(opp_move_buf)>0) {
 					if(we_are == EMPTY) {
 						we_are = BLACK;
+						enemy_is = WHITE;
 					}
 					strtok(opp_move_buf, " ");
 					char *oppCol = strtok(NULL, " ");
 					char *oppRow = strtok(NULL, " ");
-					board[atoi(oppRow)-1][oppCol[0]-97] = (we_are%2) ? BLACK : WHITE;
+					board[atoi(oppRow)-1][oppCol[0]-97] = enemy_is;
 					printf("opponent move: %c %d\n", oppCol[0], atoi(oppRow));
 				} else {
 					we_are = WHITE;
+					enemy_is = BLACK;
 				}
 			} else {
 				redprint("ERROR: move file not found?\n");

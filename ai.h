@@ -59,7 +59,7 @@ int findWeight(char* string);
 
 char board[BOARD_SIZE][BOARD_SIZE];
 char we_are;
-int weights[BOARD_SIZE][BOARD_SIZE];
+char weights[BOARD_SIZE][BOARD_SIZE];
 
 
 #endif
