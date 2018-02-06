@@ -22,7 +22,7 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	if(curr_depth <= MAX_DEPTH) {
 		int m;
 		/* For each of these moves. */
-		if(!dont){ /* If not pruned. */
+		if(!(b.dont)){ /* If not pruned. */
 			for( m = 0; m < 10 ; m++) {
 				/* Creat a child on the board. */
 				Board child = haveChild(b);
