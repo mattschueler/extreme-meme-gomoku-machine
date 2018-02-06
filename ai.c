@@ -29,8 +29,9 @@ void init_board(struct Board board) {
 	board.children = NULL;
 	board.alpha = -100000;
 	board.beta = 100000;
-	for(int i=0; i<BOARD_SIZE; i++) {
-		for(int j=0; j<BOARD_SIZE; j++) {
+	int i, j;
+	for(i=0; i<BOARD_SIZE; i++) {
+		for(j=0; j<BOARD_SIZE; j++) {
 			board.board[i][j] = EMPTY;
 		}
 	}

@@ -4,22 +4,33 @@
 
 // curr_player = 1 is us, = 0 is enemy
 int* dlminimax(struct Board b, char curr_player, int curr_depth) {
-	int **moves = calloc(sizeof(int *),10);
-	for(int i=0; i<10; i++) {
+	int **moves = calloc(sizeof(int *),10); /* For any minimax state we have a set of children to explore */
+	int i;
+	/* For a buffer of 10 moves, set them equal to presets. */
+	for(i=0; i<10; i++) {
 		moves[i] = calloc(sizeof(int), 3);
 		moves[i][0] = -1;
 		moves[i][0] = -1;
 		moves[i][0] = -100000;
 	}
+	/* Scan board for the best moves and move them into the move buffer. */
 	getBestMoves(b, moves);
+	/* Repeat this process for the children of these children; to a predefined depth. */
 	if(curr_depth <= MAX_DEPTH) {
-		for(int m = 0; m < 10 ; m++) {
+		int m;
+		/* For each of these moves. */
+		for( m = 0; m < 10 ; m++) {
+			/* Creat a child on the board. */
 			Board child = haveChild(b);
+			/* Set the location of the move to a tile of the current player. */
 			child.board[moves[m][0]][moves[m][1]] = curr_player ? we_are : enemy_is;
+			/* Assign weights in the child board w/ new move added. */
 			assign_weights(child);
+			/* Recursively call this function on the child. */
 			moves[m] = dlminimax(child, !curr_player, curr_depth+1);
 		}
 	}
+	/* Return first thing in moves */
 	return moves[0];
 }
 
