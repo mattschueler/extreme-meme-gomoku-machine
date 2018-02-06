@@ -47,19 +47,19 @@ struct slices {
 } typedef slices;
 
 struct Board {
-	Board parent; /* Parent of this board. */
-	Board* children; /* Children of this board. */
+	struct Board *parent; /* Parent of this board. */
+	struct Board *children; /* Children of this board. */
 	int alpha, beta;
 
 	char board[BOARD_SIZE][BOARD_SIZE]; /* A snapshot of the current board. */
 	int weights[BOARD_SIZE][BOARD_SIZE]; /* Set of weights accomanying the board. */
 	int bestmove[2]; /* Coordinates for the best move on this board. */
-	int dont = 0; /* If 1 this board has been pruned. */
+	int dont; /* If 1 this board has been pruned. */
 } typedef Board;
 
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]);
-void assign_weights(char board[BOARD_SIZE][BOARD_SIZE]);
+void assign_weights(struct Board board);
 int sliceResolver(slices considerations);
 void streplace(char* string, int len, char find, char replace);
 void strswap(char* string, int len, char a, char b);
@@ -67,7 +67,7 @@ void streverse(char* string, int len);
 void roll(char* string, int len);
 int findWeight(char* string);
 
-char we_are;
-
+char we_are = EMPTY;
+char enemy_is = EMPTY;
 
 #endif
