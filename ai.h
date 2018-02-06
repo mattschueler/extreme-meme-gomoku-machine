@@ -11,6 +11,7 @@
 #include <pthread.h> // for threads
 #include <sys/time.h> //for time
 #include <sys/mman.h> // for mmap
+//#include "minimax.c"
 
 #define RED   "\x1B[31m"
 #define CYAN   "\x1B[36m" // fancy color FONT markers
@@ -53,7 +54,6 @@ struct Board {
 
 	char board[BOARD_SIZE][BOARD_SIZE]; /* A snapshot of the current board. */
 	int weights[BOARD_SIZE][BOARD_SIZE]; /* Set of weights accomanying the board. */
-	int bestmove[2]; /* Coordinates for the best move on this board. */
 	int dont; /* If 1 this board has been pruned. */
 } typedef Board;
 
@@ -66,8 +66,6 @@ void strswap(char* string, int len, char a, char b);
 void streverse(char* string, int len);
 void roll(char* string, int len);
 int findWeight(char* string);
-Board haveChild(struct Board b);
-int** getBestMoves(struct Board b);
 
 char we_are = EMPTY;
 char enemy_is = EMPTY;

@@ -1,5 +1,6 @@
 #include "ai.h"
 #include "assign_weights.c"
+#include "minimax.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -34,10 +35,7 @@ void init_board(struct Board board) {
 		}
 	}
 	initWeights(board);
-	board.bestmove[0] = -1;
-	board.bestmove[1] = -1;
 	board.dont = 0;
-
 }
 
 

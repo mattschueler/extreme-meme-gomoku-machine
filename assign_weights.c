@@ -1,3 +1,5 @@
+#ifndef ASSIGN_C
+#define ASSIGN_C
 #include "ai.h"
 #define no_print
 
@@ -250,3 +252,4 @@ int findWeight(char* string){
 	redprint("ERROR: IN FINDPATTERN; DID NOT RECOGNIZE PATTERN %s\n", string);
 	return ((uint) 1)>>1; //the most negative value (but we should never reach this point)
 }
+#endif
