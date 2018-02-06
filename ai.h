@@ -63,4 +63,3 @@ int weights[BOARD_SIZE][BOARD_SIZE];
 
 
 #endif
-
