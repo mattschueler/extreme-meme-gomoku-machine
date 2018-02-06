@@ -3,7 +3,7 @@
 #include "minimax.h"
 
 // curr_player = 1 is us, = 0 is enemy
-int* dlminimax(struct Board b, char curr_player, int curr_depth) {
+int* dlminimax(Board b, char curr_player, int curr_depth) {
 	int **moves = calloc(sizeof(int *),10); /* For any minimax state we have a set of children to explore */
 	int i;
 	/* For a buffer of 10 moves, set them equal to presets. */
@@ -16,7 +16,7 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	/* Scan board for the best moves and move them into the move buffer. */
 	getBestMoves(b, moves);
 	/* Before expanding, see if we need to prune. */
-	b.dont = abEval(b, moves, curr_player);
+	abEval(b, moves, curr_player);
 
 	/* Repeat this process for the children of these children; to a predefined depth. */
 	if(curr_depth <= MAX_DEPTH) {
@@ -40,7 +40,7 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	return moves[0];
 }
 
-void getBestMoves(struct Board b, int **moves) {
+void getBestMoves(Board b, int **moves) {
 	int i, j, k, l;
 	for(i=0; i<BOARD_SIZE; i++) {
 		for(j=0; j<BOARD_SIZE; j++) {
@@ -60,14 +60,14 @@ void getBestMoves(struct Board b, int **moves) {
 	}
 }
 
-void abEval(struct Board b, int** moves, char curr_player){
+void abEval(Board b, int** moves, char curr_player){
 	int tempa = moves[0][2]; /* Highest possible value that max can get. */
 	int tempb = moves[0][2] * -1; /* Largest denial min can force on max. */
 	if(we_are == curr_player){
 		/* MAX */
-		if(tempa > b.parent.alpha){
+		if(tempa > b.parent->alpha){
 			/* We have a new alpha. */
-			b.parent.alpha = tempa;
+			b.parent->alpha = tempa;
 		}
 		else{
 			b.dont = 1;
@@ -75,8 +75,8 @@ void abEval(struct Board b, int** moves, char curr_player){
 	}
 	else{
 		/* MIN */
-		if(tempb < b.parent.beta){
-			b.parent.beta = tempb;
+		if(tempb < b.parent->beta){
+			b.parent->beta = tempb;
 		}
 		else{
 			b.dont = 1;
@@ -84,11 +84,11 @@ void abEval(struct Board b, int** moves, char curr_player){
 	}
 	/* Now pass that value up above */
 	if(b.parent != NULL){ /* If there's a parent. */
-		abEval(b.parent, moves, curr_player);
+		abEval((* b.parent), moves, curr_player);
 	}
 }
 
-struct Board haveChild(struct Board parent) {
+struct Board haveChild(Board parent) {
 	/* Initialize baby */
 	struct Board child = {0};
 	/* Set parameters */
