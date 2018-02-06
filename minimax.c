@@ -4,10 +4,12 @@
 
 // curr_player = 1 is us, = 0 is enemy
 int* dlminimax(struct Board b, char curr_player, int curr_depth) {
-	int **moves = calloc(sizeof(int *),10); /* For any minimax state we have a set of children to explore */
+	int branching_factor = 10;
+	int **moves = calloc(sizeof(int *),branching_factor); /* For any minimax state we have a set of children to explore */
 	int i;
+
 	/* For a buffer of 10 moves, set them equal to presets. */
-	for(i=0; i<10; i++) {
+	for(i=0; i<branching_factor; i++) {
 		moves[i] = calloc(sizeof(int), 3);
 		moves[i][0] = -1; /* X of the move. */
 		moves[i][1] = -1; /* Y of the move. */
@@ -16,14 +18,14 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	/* Scan board for the best moves and move them into the move buffer. */
 	getBestMoves(b, moves);
 	/* Before expanding, see if we need to prune. */
-	abEval(b, moves, curr_player);
+	//abEval(b, moves, curr_player);
 
 	/* Repeat this process for the children of these children; to a predefined depth. */
 	if(curr_depth <= MAX_DEPTH) {
 		int m;
 		/* For each of these moves. */
 		if(!(b.dont)){ /* If not pruned. */
-			for( m = 0; m < 10 ; m++) {
+			for( m = 0; m < branching_factor ; m++) {
 				/* Creat a child on the board. */
 				struct Board child = haveChild(b);
 				/* Set the location of the move to a tile of the current player. */
@@ -36,8 +38,17 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 			}
 		}
 	}
+	int bestMoveIndex = -1;
+	int bestMoveValue = -100000;
+	int j;
+	for (j=0; j<branching_factor; j++) {
+		if(moves[j][2] > bestMoveValue) {
+			bestMoveIndex = j;
+			bestMoveValue = moves[j][2];
+		}
+	}
 	/* Return first thing in moves */
-	return moves[0];
+	return moves[j];
 }
 
 void getBestMoves(struct Board b, int **moves) {
