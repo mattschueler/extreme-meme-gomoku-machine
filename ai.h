@@ -70,4 +70,8 @@ int findWeight(char* string);
 char we_are = EMPTY;
 char enemy_is = EMPTY;
 
+char board[BOARD_SIZE][BOARD_SIZE] = {EMPTY};
+int weights[BOARD_SIZE][BOARD_SIZE] = {0};
+
+
 #endif

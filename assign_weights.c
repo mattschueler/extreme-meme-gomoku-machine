@@ -1,7 +1,7 @@
 #ifndef ASSIGN_C
 #define ASSIGN_C
 #include "ai.h"
-#define no_print
+//#define no_print
 
 /* (defined in ai.h, but here for reference)
 struct slices {
@@ -15,6 +15,10 @@ struct slices {
 #ifndef no_print
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
+	print_weights();
+	return;
+	if(we_are == BLACK){return;}
+
 	for(i=0; i<BOARD_SIZE; i++){
 		printf("\n");
 		for(j=0; j<BOARD_SIZE; j++){
@@ -33,25 +37,46 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	}
 	printf("\n");
 	fflush(stdout);
-	reset_print_board(board);
 }
-void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]){
+void print_weights(){
 	int i, j;
+	if(we_are == BLACK){return;}
+
 	for(i=0; i<BOARD_SIZE; i++){
-		printf("\b");
+		printf("\n");
 		for(j=0; j<BOARD_SIZE; j++){
-			printf("\b");
+			blackprint(" %d ", weights[i][j]);
+			fflush(stdout);
 		}
 	}
+	printf("\n");
+	fflush(stdout);
 }
 
 #else
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]){return;}
-void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]){return;}
 #endif
 
+char convert(char c){
+	switch(c){
+		case EMPTY:
+			return 'E';
 
-void assign_weights(struct Board board){
+		case WHITE:
+			if(we_are == WHITE)return 'X';
+			else return 'Y';
+
+		case BLACK:
+			if(we_are == WHITE)return 'Y';
+			else return 'X';
+
+		default:
+			redprint("THE BOARD APPARANTLY CONTAINS A TILE WHICH IS NOT EMPTY, WHITE, OR BLACK? -->'%1s'\n", &c);
+			return 'E';
+	}
+}
+
+void assign_weights(struct Board b){
 /*
 	if(we_are == WHITE){
 		char enemy = BLACK;
@@ -62,64 +87,128 @@ void assign_weights(struct Board board){
 	int i, j;
 	for(i=0; i<BOARD_SIZE; i++){
 		for(j=0; j<BOARD_SIZE; j++){
-			if(board.board[i][j] == EMPTY){
+			if(b.board[i][j] == EMPTY){
 				//if the board spot is empty, then it is a possible move for us/the enemy
 				int m,n;
 
-				slices considerations;
+				slices considerations = {0};
 
+				int k = 0;
 				//check for '|'
-				for(m=j-4; m<j+4; m++){ //VERTICAL slide-rule checks
-					if(m<0){m=0;}//prevent under-bounds
+				for(m=j-4; m<=j+4; m++){ //VERTICAL slide-rule checks
+					if(m<0){continue;}//prevent under-bounds
 					if(m>BOARD_SIZE){break;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.vertical) = board.board[i][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
-					(*(considerations.vertical))++;
+					considerations.vertical[k] = convert(b.board[i][m]);
+					k++;
 				}
+				//*(considerations.vertical)=*(considerations.vertical)-9;
 
+				k = 0;
 				//check for '--'
-				for(n=i-4; n<i+4; n++){ //HORIZONTAL slide-rule checks
-					if(n<0){n=0;}//prevent under-bounds
+				for(n=i-4; n<=i+4; n++){ //HORIZONTAL slide-rule checks
+					if(n<0){continue;}//prevent under-bounds
 					if(n>BOARD_SIZE){break;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.horizontal) = board.board[n][j]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
-					(*(considerations.horizontal))++;
+					considerations.horizontal[k] = convert(b.board[n][j]); 
+					k++;
 				}
+				//*(considerations.horizontal)=*(considerations.horizontal)-9;
 
+				k = 0;
 				//check for '/'
-				for(m=j-4, n=i-4; (m<j+4) && (n<i+4); m++, n++){ //POSITIVE DIAGONAL (/) slide-rule checks
+				for(m=j-4, n=i-4; (m<=j+4) && (n<=i+4); m++, n++){ //POSITIVE DIAGONAL (/) slide-rule checks
 					if((n<0)||(m<0)){continue;}//prevent under-bounds (continuing will increment BOTH m and n simultaneously, keeping our constraint of m on n)
 					if((n>BOARD_SIZE)||(m>BOARD_SIZE)){continue;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.pos_diag) = board.board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
-					(*(considerations.pos_diag))++;
+					considerations.pos_diag[k] = convert(b.board[n][m]);
+					k++;
 				}
+				//*(considerations.pos_diag)=*(considerations.pos_diag)-9;
 
+				k = 0;
 				//check for '\'
-				for(m=j+4, n=i-4; (m>j-4) && (n<i+4); m--, n++){ //NEGATIVE DIAGONAL (\) slide-rule checks
+				for(m=j+4, n=i-4; (m>=j-4) && (n<=i+4); m--, n++){ //NEGATIVE DIAGONAL (\) slide-rule checks
 					if((n<0)||(m<0)){continue;}//prevent under-bounds (continuing will increment BOTH m and n simultaneously, keeping our constraint of m on n)
 					if((n>BOARD_SIZE)||(m>BOARD_SIZE)){continue;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					*(considerations.neg_diag) = board.board[n][m]; //WE WILL NEED TO DO SOMETHING HERE, LIKELY WITH ANOTHER MATRIX OF "BADNESS" AND "GOODNESS" VALUES.
-					(*(considerations.neg_diag))++;
+					considerations.neg_diag[k] = convert(b.board[n][m]);
+					k++;
 				}
+				//*(considerations.neg_diag)=*(considerations.neg_diag)-9;
 
 				//convenient break-point for checking "considerations"
 				/* Logan likes C-style comments. */
 				/* Begin pattern recognition of slices and assign weights. */
-				board.weights[i][j] = sliceResolver(considerations);
+				b.weights[i][j] = sliceResolver(considerations);
 			}
+			else{weights[i][j]=0;}//if the board is not empty, then the weight here should be 0.
 		}
 	}
 }
 
 /*performs an in-place right-roll of a string (eg 1234 -> 4123 -> 4312 -> 2341 -> 1234)*/
 void roll(char* string, int len){
-	redprint("%s",string);
-	char first = string[len];
-	strncpy(string+1, string, len-1);
-	string[0] = first;
-	redprint("%s",string);
+	int i;
+	char temp = string[len-1];
+	for(i = len-1; i>=0; i--){
+		string[i] = string[i-1];
+	}
+	string[0]=temp;
+}
+
+
+void print_considerations(slices considerations){
+	slices toprint = {0};
+	if(we_are == BLACK){
+		return;
+	}
+	memcpy(&toprint, &considerations, sizeof(slices));
+	char* slice;
+	int step;
+
+	for(step=0; step<4; step++){
+
+		switch(step){
+			case 0:
+			slice = toprint.horizontal;
+				break;
+			case 1:
+			slice = toprint.vertical;
+				break;
+			case 2:
+			slice = toprint.pos_diag;
+				break;
+			case 3:
+			slice = toprint.neg_diag;
+				break;
+		}
+		streplace(slice, 5, EMPTY, 'E');
+		if(we_are == BLACK){
+			streplace(slice, 5, BLACK, 'X');
+			streplace(slice, 5, WHITE, 'Y');
+		}else{
+			streplace(slice, 5, BLACK, 'Y');
+			streplace(slice, 5, WHITE, 'X');
+		}
+	}
+
+
+	orangeprint("\nhorizontal:%9s|", toprint.horizontal);
+	orangeprint("|vertical:%9s|"  , toprint.vertical);
+	orangeprint("|pos_diag:%9s|"  , toprint.pos_diag);
+	orangeprint("|neg_diag:%9s|\n", toprint.neg_diag);
+
+}
+
+int contains(char* string, int len, char sub){
+	int i;
+	for(i=0; i<len; i++){
+		if(string[i]==sub){
+			return 1;
+		}
+	}
+	return 0;
 }
 
 /* Slice Substring Solver: Will parse through the slice and search for */
@@ -127,6 +216,8 @@ void roll(char* string, int len){
 int sliceResolver(slices considerations){
 	/* W/ blocksize = 5, parse through a 9 length string. */
 	int weight = 0;//initially, we don't care to go here
+
+	//print_considerations(considerations);
 
 	char* slice;
 	char substring[5];
@@ -152,39 +243,47 @@ int sliceResolver(slices considerations){
 		}
 
 		for(slice_offset = 0; slice_offset<5; slice_offset++){
-			strncpy(substring, slice+slice_offset, 5);
+			memcpy(substring, slice+slice_offset, 5);
+
+			if(contains(substring, 5, (char) 0)){
+				continue;//ignore checking "edge-case" substrings, which may be less than length 5 (ie some of the 9 are off-board)
+			}
 
 			weight += findWeight(substring);
+
 		}
 	}
 	return weight;
 }
 
 void streplace(char* string, int len, char find, char replace){
-	for(; len>0; len--){
-		if(string[len-1] == find){string[len-1] = replace;}
+	int i;
+	for(i=0; i<len; i++){
+		if(string[i] == find){string[i] = replace;}
 	}
 }
 
 void strswap(char* string, int len, char a, char b){
-	for(; len>0; len--){
-		if(string[len-1] == a){string[len-1] = b;continue;}
-		if(string[len-1] == b){string[len-1] = a;continue;}
+	int i;
+	for(i=0; i<len; i++){
+		if(string[i] == a){string[i] = b;continue;}
+		if(string[i] == b){string[i] = a;continue;}
 	}
 }
 
 void streverse(char* string, int len){
-	char temp;
 	int i;
-	for(i = 0; i<(len/2); i++){
+	char temp = ' ';
+	for(i = 0; i<len/2; i++){
 		temp = string[i];
-		string[i] = string[len-i];
-		string[len-1] = temp;
+		string[i] = string[len-i-1];
+		string[len-i-1] = temp;
 	}
 }
 
 /* Find Pattern: a function designed to compare the input string to any of the patterns */
 /* That could result in a win. */
+/* we convolve the substring on itself in this function*/
 int findWeight(char* string){
 	int roll_attempts = 5;
 	int inverse_attempts = 2;
@@ -202,51 +301,51 @@ int findWeight(char* string){
 	for(inverse_attempts=2; inverse_attempts>0; inverse_attempts--){
 		for(reverse_attempts=2; reverse_attempts>0; reverse_attempts--){
 			for(roll_attempts=5; roll_attempts>0; roll_attempts--){
-
 				/*0*/
-				if(strcmp(string,"EEEEE")){return 0;}
-
+				if(!strncmp(string,"EEEEE", 5)){return 1;}	
+				
 				/*1*/
-				else if(strcmp(string,"EEEEX")){return 2-inv;}
-
+				if(!strncmp(string,"EEEEX", 5)){return 6-inv;}
+				
 				/*2*/
-				else if(strcmp(string,"EEEXX")){return 16-inv;}
-				else if(strcmp(string,"EEXEX")){return 16-inv;}
-
+				if(!strncmp(string,"EEEXX", 5)){return 32-inv;}
+				if(!strncmp(string,"EEXEX", 5)){return 32-inv;}
+				
 				/*3*/
-				else if(strcmp(string,"EEXXX")){return 64-inv;}
-				else if(strcmp(string,"EXEXX")){return 64-inv;}
+				if(!strncmp(string,"EEXXX", 5)){return 128-inv;}
+				if(!strncmp(string,"EXEXX", 5)){return 128-inv;}
+				
 
 				/*4*/
-				else if(strcmp(string,"EXXXX")){return 1024-inv;}
+				if(!strncmp(string,"EXXXX", 5)){return 4096-inv;}
 				/*---*/
 				/*2 CORRUPTION 1*/
-				else if(strcmp(string,"EEEXY")){return 2-inv;}
-				else if(strcmp(string,"EEXEY")){return 2-inv;}
+				if(!strncmp(string,"EEEXY", 5)){return 2-inv;}
+				if(!strncmp(string,"EEXEY", 5)){return 2-inv;}
 
 				/*3 CORRUPTION 1*/
-				else if(strcmp(string,"EEXXY")){return 16-inv;}
-				else if(strcmp(string,"EEXYX")){return 16-inv;}
-				else if(strcmp(string,"EYEXX")){return 16-inv;}
-				else if(strcmp(string,"EXEYX")){return 16-inv;}
-				else if(strcmp(string,"EXEXY")){return 16-inv;}
+				if(!strncmp(string,"YEEXX", 5)){return 24-inv;}
+				if(!strncmp(string,"YXEEX", 5)){return 24-inv;}
+				if(!strncmp(string,"YEXXE", 5)){return 24-inv;}
+				if(!strncmp(string,"YEXEX", 5)){return 24-inv;}
 
 				/*4 CORRUPTION 1*/
-				else if(strcmp(string,"EYXXX")){return 256-inv;}
-				else if(strcmp(string,"EXYXX")){return 16-inv;}
+				if(!strncmp(string,"YXXXE", 5)){return 72-inv;}
+				if(!strncmp(string,"YXXEX", 5)){return 72-inv;}
 
 				/*4 CORRUPTION 2*/
-				else if(strcmp(string,"EYYXX")){return 16-inv;}
-				else if(strcmp(string,"EYXYX")){return 2-inv;}
+				if(!strncmp(string,"EYYXX", 5)){return 16-inv;}
+				if(!strncmp(string,"EYXYX", 5)){return 0-inv;} //this pattern is ALWAYS "salted earth" -- can't be rolled or reversed to form anything useful
+				if(!strncmp(string,"YEYXX", 5)){return 3-inv;}
 
 				roll(string, 5);
 			}
 
 		streverse(string, 5);//reverse the string
 		}
-
-		strswap(string, 5, 'X','Y');
-		inv = 1;//if we had to inverse the search string to match, then we are looking at sub-optimal, potentially over-defensive moves, so we should subtract a bit of points to prefer aggressive, tie-breaking/game-winning moves.
+		
+	strswap(string, 5, 'X','Y');
+	inv = 1;//if we had to inverse the search string to match, then we are looking at sub-optimal, potentially over-defensive moves, so we should subtract a bit of points to prefer aggressive, tie-breaking/game-winning moves.
 	}
 
 	redprint("ERROR: IN FINDPATTERN; DID NOT RECOGNIZE PATTERN %s\n", string);
