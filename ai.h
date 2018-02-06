@@ -59,7 +59,7 @@ struct Board {
 
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void reset_print_board(char board[BOARD_SIZE][BOARD_SIZE]);
-void assign_weights(struct Board board);
+void assign_weights(struct Board *board);
 int sliceResolver(slices considerations);
 void streplace(char* string, int len, char find, char replace);
 void strswap(char* string, int len, char a, char b);

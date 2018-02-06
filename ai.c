@@ -41,7 +41,7 @@ void init_board(Board board) {
 }
 
 
-void getMove(Board board, int *col, int *row) {
+void getMove(struct Board *board, int *col, int *row) {
 	int i,j;
 	int tempCols[BOARD_SIZE*BOARD_SIZE] = {-1};
 	int tempRows[BOARD_SIZE*BOARD_SIZE] = {-1};
@@ -51,13 +51,13 @@ void getMove(Board board, int *col, int *row) {
 
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
-			if(( board.weights[i][j]>max )&&( board.board[i][j]==EMPTY )){
+			if(( board->weights[i][j]>max )&&( board->board[i][j]==EMPTY )){
 				range = 0;
 				tempRows[range]=i;
 				tempCols[range]=j;
-				max = board.weights[i][j];
+				max = board->weights[i][j];
 			}
-			if((board.weights[i][j]==max)&&(board.board[i][j]==EMPTY)){
+			if((board->weights[i][j]==max)&&(board->board[i][j]==EMPTY)){
 				range++;
 				tempRows[range]=i;
 				tempCols[range]=j;
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 		// check for move file
 		FILE *eg = fopen("end_game", "r");
 		if(eg != NULL) {
-			greenprint("GAME EXITED");
+			greenprint("GAME EXITED\n");
 			exit(0);
 		}
 		char fname[32] = {0};
@@ -123,9 +123,7 @@ int main(int argc, char** argv) {
 			// write our move
 			char move_buf[256] = {0};
 			int col, row;
-
-			getMove(globalBoard, &col, &row);
-
+			getMove(&globalBoard, &col, &row);
 			// DO THE MINIMAX HERE
 			globalBoard.board[row][col] = we_are;
 			sprintf(move_buf, "%s %c %d\n", TEAMNAME, col+97, row+1);
@@ -133,7 +131,8 @@ int main(int argc, char** argv) {
 			mv = fopen("move_file","w");
 			fwrite(move_buf, strlen(move_buf), 1, mv);
 			fclose(mv);
-			print_board(globalBoard.board);
+			logPrintWeights(globalBoard);
+			//print_board(globalBoard.board);
 			sleep(1);
 		} else {
 			sleep(0.25);

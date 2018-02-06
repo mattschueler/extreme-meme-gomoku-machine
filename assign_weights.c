@@ -15,7 +15,6 @@ struct slices {
 #ifndef no_print
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
-	print_weights();
 	return;
 	if(we_are == BLACK){return;}
 
@@ -38,23 +37,62 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	printf("\n");
 	fflush(stdout);
 }
-void print_weights(){
+
+void logPrintWeights(struct Board b) {
+	int i,j;
+	for(i=0;i<BOARD_SIZE;i++) {
+		for(j=0;j<BOARD_SIZE;j++) {
+			if(b.board[i][j]==we_are) {
+				blackprint("X");
+			} else if(b.board[i][j]==enemy_is) {
+				blackprint("O");
+			} else {
+				switch(b.weights[i][j]) {
+					case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:case 8:case 9:
+						redprint("%d", b.weights[i][j]);
+						continue;
+					default:
+						switch(b.weights[i][j]/10) {
+							case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:case 8:case 9:
+								orangeprint("%d", b.weights[i][j]/10);
+								continue;
+							default:
+								switch(b.weights[i][j]/100) {
+									case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:case 8:case 9:
+										greenprint("%d", b.weights[i][j]/100);
+										continue;
+									default:
+										cyanprint("%d", b.weights[i][j]/1000);
+										continue;
+								}
+								continue;
+						}
+						continue;
+				}
+			}
+		}
+		printf("\n");
+	}
+}
+
+/*void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
 	if(we_are == BLACK){return;}
 
 	for(i=0; i<BOARD_SIZE; i++){
 		printf("\n");
 		for(j=0; j<BOARD_SIZE; j++){
-			blackprint(" %d ", weights[i][j]);
+			blackprint(" %d ", board[i][j]);
 			fflush(stdout);
 		}
 	}
 	printf("\n");
 	fflush(stdout);
-}
+}*/
 
 #else
-void print_board(char board[BOARD_SIZE][BOARD_SIZE]){return;}
+void logPrintWeights(struct Board b){return;}
+void print_board(char b[BOARD_SIZE][BOARD_SIZE]){return;}
 #endif
 
 char convert(char c){
@@ -69,14 +107,11 @@ char convert(char c){
 		case BLACK:
 			if(we_are == WHITE)return 'Y';
 			else return 'X';
-
-		default:
-			redprint("THE BOARD APPARANTLY CONTAINS A TILE WHICH IS NOT EMPTY, WHITE, OR BLACK? -->'%1s'\n", &c);
-			return 'E';
 	}
+	return 0;
 }
 
-void assign_weights(Board b){
+void assign_weights(struct Board *b){
 /*
 	if(we_are == WHITE){
 		char enemy = BLACK;
@@ -87,7 +122,7 @@ void assign_weights(Board b){
 	int i, j;
 	for(i=0; i<BOARD_SIZE; i++){
 		for(j=0; j<BOARD_SIZE; j++){
-			if(b.board[i][j] == EMPTY){
+			if(b->board[i][j] == EMPTY){
 				//if the board spot is empty, then it is a possible move for us/the enemy
 				int m,n;
 
@@ -99,7 +134,7 @@ void assign_weights(Board b){
 					if(m<0){continue;}//prevent under-bounds
 					if(m>BOARD_SIZE){break;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					considerations.vertical[k] = convert(b.board[i][m]);
+					considerations.vertical[k] = convert(b->board[i][m]);
 					k++;
 				}
 				//*(considerations.vertical)=*(considerations.vertical)-9;
@@ -110,7 +145,7 @@ void assign_weights(Board b){
 					if(n<0){continue;}//prevent under-bounds
 					if(n>BOARD_SIZE){break;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					considerations.horizontal[k] = convert(b.board[n][j]); 
+					considerations.horizontal[k] = convert(b->board[n][j]);
 					k++;
 				}
 				//*(considerations.horizontal)=*(considerations.horizontal)-9;
@@ -121,7 +156,7 @@ void assign_weights(Board b){
 					if((n<0)||(m<0)){continue;}//prevent under-bounds (continuing will increment BOTH m and n simultaneously, keeping our constraint of m on n)
 					if((n>BOARD_SIZE)||(m>BOARD_SIZE)){continue;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					considerations.pos_diag[k] = convert(b.board[n][m]);
+					considerations.pos_diag[k] = convert(b->board[n][m]);
 					k++;
 				}
 				//*(considerations.pos_diag)=*(considerations.pos_diag)-9;
@@ -132,7 +167,7 @@ void assign_weights(Board b){
 					if((n<0)||(m<0)){continue;}//prevent under-bounds (continuing will increment BOTH m and n simultaneously, keeping our constraint of m on n)
 					if((n>BOARD_SIZE)||(m>BOARD_SIZE)){continue;}//prevent over-bounds (since we are going left-to-right, then hitting the right bound should cause us to stop searching)
 
-					considerations.neg_diag[k] = convert(b.board[n][m]);
+					considerations.neg_diag[k] = convert(b->board[n][m]);
 					k++;
 				}
 				//*(considerations.neg_diag)=*(considerations.neg_diag)-9;
@@ -140,11 +175,12 @@ void assign_weights(Board b){
 				//convenient break-point for checking "considerations"
 				/* Logan likes C-style comments. */
 				/* Begin pattern recognition of slices and assign weights. */
-				b.weights[i][j] = sliceResolver(considerations);
+				b->weights[i][j] = sliceResolver(considerations);
 			}
 			else{weights[i][j]=0;}//if the board is not empty, then the weight here should be 0.
 		}
 	}
+	//logPrintWeights(board);
 }
 
 /*performs an in-place right-roll of a string (eg 1234 -> 4123 -> 4312 -> 2341 -> 1234)*/
@@ -302,19 +338,19 @@ int findWeight(char* string){
 		for(reverse_attempts=2; reverse_attempts>0; reverse_attempts--){
 			for(roll_attempts=5; roll_attempts>0; roll_attempts--){
 				/*0*/
-				if(!strncmp(string,"EEEEE", 5)){return 1;}	
-				
+				if(!strncmp(string,"EEEEE", 5)){return 1;}
+
 				/*1*/
 				if(!strncmp(string,"EEEEX", 5)){return 6-inv;}
-				
+
 				/*2*/
 				if(!strncmp(string,"EEEXX", 5)){return 32-inv;}
 				if(!strncmp(string,"EEXEX", 5)){return 32-inv;}
-				
+
 				/*3*/
 				if(!strncmp(string,"EEXXX", 5)){return 128-inv;}
 				if(!strncmp(string,"EXEXX", 5)){return 128-inv;}
-				
+
 
 				/*4*/
 				if(!strncmp(string,"EXXXX", 5)){return 4096-inv;}
@@ -343,7 +379,7 @@ int findWeight(char* string){
 
 		streverse(string, 5);//reverse the string
 		}
-		
+
 	strswap(string, 5, 'X','Y');
 	inv = 1;//if we had to inverse the search string to match, then we are looking at sub-optimal, potentially over-defensive moves, so we should subtract a bit of points to prefer aggressive, tie-breaking/game-winning moves.
 	}
