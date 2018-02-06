@@ -7,7 +7,7 @@
 #include <string.h>
 
 char TEAMNAME[32] = {0};
-struct Board globalBoard;
+Board globalBoard = {0};
 
 void initWeights(struct Board board){
 	int i, j;
@@ -72,7 +72,7 @@ void getMove(struct Board board, int *col, int *row) {
 
 int main(int argc, char** argv) {
 	srand(time(NULL));
-	
+
 	init_board(globalBoard);
 
 	if(argc<2){

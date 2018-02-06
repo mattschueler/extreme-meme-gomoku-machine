@@ -67,7 +67,7 @@ void getBestMoves(struct Board b, int **moves) {
 
 struct Board haveChild(struct Board parent) {
 	/* Initialize baby */
-	struct Board child;
+	struct Board child = {0};
 	/* Set parameters */
 	child.parent = &parent;
 	child.children = NULL;
