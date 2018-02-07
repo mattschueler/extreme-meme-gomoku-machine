@@ -15,8 +15,6 @@ struct slices {
 #ifndef no_print
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]){
 	int i, j;
-	return;
-	if(we_are == BLACK){return;}
 
 	for(i=0; i<BOARD_SIZE; i++){
 		printf("\n");

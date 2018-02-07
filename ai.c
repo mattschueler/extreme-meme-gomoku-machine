@@ -69,7 +69,12 @@ void getMove(struct Board *board, int *col, int *row) {
 	*row = tempRows[which_move];
 }
 
-
+void getMoveMinimax(struct Board *board, int *col, int *row) {
+	assign_weights(board);
+	int *move = dlminimax(*board, 1, 0);
+	*col = move[1];
+	*row = move[0];
+}
 
 int main(int argc, char** argv) {
 	srand(time(NULL));
@@ -123,7 +128,7 @@ int main(int argc, char** argv) {
 			// write our move
 			char move_buf[256] = {0};
 			int col, row;
-			getMove(&globalBoard, &col, &row);
+			getMoveMinimax(&globalBoard, &col, &row);
 			// DO THE MINIMAX HERE
 			globalBoard.board[row][col] = we_are;
 			sprintf(move_buf, "%s %c %d\n", TEAMNAME, col+97, row+1);

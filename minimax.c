@@ -4,19 +4,20 @@
 
 // curr_player = 1 is us, = 0 is enemy
 int* dlminimax(struct Board b, char curr_player, int curr_depth) {
-	int branching_factor = 10;
-	int **moves = calloc(sizeof(int *),branching_factor); /* For any minimax state we have a set of children to explore */
+	if(curr_depth==0) {
+		print_board(b.board);
+	}
+	int **moves = calloc(sizeof(int *),BRANCHING_FACTOR); /* For any minimax state we have a set of children to explore */
 	int i;
-
 	/* For a buffer of 10 moves, set them equal to presets. */
-	for(i=0; i<branching_factor; i++) {
+	for(i=0; i<BRANCHING_FACTOR; i++) {
 		moves[i] = calloc(sizeof(int), 3);
 		moves[i][0] = -1; /* X of the move. */
 		moves[i][1] = -1; /* Y of the move. */
 		moves[i][2] = -100000; /* Value of the move. */
 	}
 	/* Scan board for the best moves and move them into the move buffer. */
-	getBestMoves(b, moves);
+	getBestMoves(b, moves, curr_player);
 	/* Before expanding, see if we need to prune. */
 	//abEval(b, moves, curr_player);
 
@@ -25,46 +26,92 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 		int m;
 		/* For each of these moves. */
 		if(!(b.dont)){ /* If not pruned. */
-			for( m = 0; m < branching_factor ; m++) {
+			for( m = 0; m < BRANCHING_FACTOR ; m++) {
 				/* Creat a child on the board. */
 				struct Board child = haveChild(b);
 				/* Set the location of the move to a tile of the current player. */
 				child.board[moves[m][0]][moves[m][1]] = curr_player ? we_are : enemy_is;
 				/* Assign weights in the child board w/ new move added. */
 				assign_weights(&child);
-
 				/* Recursively call this function on the child. */
 				moves[m] = dlminimax(child, !curr_player, curr_depth+1);
 			}
 		}
 	}
-	int bestMoveIndex = -1;
-	int bestMoveValue = -100000;
+
 	int j;
-	for (j=0; j<branching_factor; j++) {
-		if(moves[j][2] > bestMoveValue) {
-			bestMoveIndex = j;
-			bestMoveValue = moves[j][2];
+	int tempCols[BRANCHING_FACTOR] = {-1};
+	int tempRows[BRANCHING_FACTOR] = {-1};
+	int range = 0;
+	int best;
+	if(curr_player) {
+		best = -100000;
+	} else {
+		best = 100000;
+	}
+	/*for(int k=0;k<BRANCHING_FACTOR;k++) {
+		printf("%d %d,%d,%d\t", curr_depth, moves[k][0], moves[k][1], moves[k][2]);
+	}
+	printf("\n");*/
+	for(j = 0; j < BRANCHING_FACTOR; j++){
+		if(curr_player) {
+			if(moves[j][2]>best) {
+				range = 0;
+				tempRows[range]=moves[j][0];
+				tempCols[range]=moves[j][1];
+				best = moves[j][2];
+			}
+		} else {
+			if(moves[j][2]<best){
+				range = 0;
+				tempRows[range]=moves[j][0];
+				tempCols[range]=moves[j][1];
+				best = moves[j][2];
+			}
+		}
+		if(moves[j][2]==best) {
+			range++;
+			tempRows[range]=moves[j][0];
+			tempCols[range]=moves[j][1];
 		}
 	}
-	/* Return first thing in moves */
-	return moves[j];
+	int which_move = rand()%range;
+	int *bestMove = (int *)calloc(sizeof(int), 3);
+	bestMove[0] = tempCols[which_move];
+	bestMove[1] = tempRows[which_move];
+	bestMove[2] = best;
+	return bestMove;
 }
 
-void getBestMoves(struct Board b, int **moves) {
+void getBestMoves(struct Board b, int **moves, int curr_player) {
 	int i, j, k, l;
 	for(i=0; i<BOARD_SIZE; i++) {
 		for(j=0; j<BOARD_SIZE; j++) {
-			for(k=0; k<10; k++) {
-				if(b.weights[i][j]>moves[k][2]) {
-					for(l=10; l>k; l--) {
-						moves[l][0] = moves[l-1][0];
-						moves[l][1] = moves[l-1][1];
-						moves[l][2] = moves[l-1][2];
+			if(b.board[i][j]==EMPTY) {
+				for(k=0; k<BRANCHING_FACTOR; k++) {
+					if(curr_player) {
+						if(b.weights[i][j]>moves[k][2]) {
+							for(l=BRANCHING_FACTOR-1; l>k; l--) {
+								moves[l][0] = moves[l-1][0];
+								moves[l][1] = moves[l-1][1];
+								moves[l][2] = moves[l-1][2];
+							}
+							moves[k][0] = i;
+							moves[k][1] = j;
+							moves[k][2] = b.weights[i][j];
+						}
+					} else {
+						if(b.weights[i][j]<moves[k][2]) {
+							for(l=BRANCHING_FACTOR-1; l>k; l--) {
+								moves[l][0] = moves[l-1][0];
+								moves[l][1] = moves[l-1][1];
+								moves[l][2] = moves[l-1][2];
+							}
+							moves[k][0] = i;
+							moves[k][1] = j;
+							moves[k][2] = b.weights[i][j];
+						}
 					}
-					moves[k][0] = i;
-					moves[k][1] = j;
-					moves[k][2] = b.weights[i][j];
 				}
 			}
 		}
