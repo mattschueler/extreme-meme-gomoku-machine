@@ -71,7 +71,7 @@ void getMove(struct Board *board, int *col, int *row) {
 
 void getMoveMinimax(struct Board *board, int *col, int *row) {
 	assign_weights(board);
-	int *move = dlminimax(*board, 1, 0);
+	int *move = dlminimax(board, 1, 0);
 	*col = move[1];
 	*row = move[0];
 }
