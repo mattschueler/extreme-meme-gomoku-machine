@@ -4,9 +4,6 @@
 
 // curr_player = 1 is us, = 0 is enemy
 int* dlminimax(struct Board b, char curr_player, int curr_depth) {
-	if(curr_depth==0) {
-		print_board(b.board);
-	}
 	int **moves = calloc(sizeof(int *),BRANCHING_FACTOR); /* For any minimax state we have a set of children to explore */
 	int i;
 	/* For a buffer of 10 moves, set them equal to presets. */
@@ -34,7 +31,7 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 				/* Assign weights in the child board w/ new move added. */
 				assign_weights(&child);
 				/* Recursively call this function on the child. */
-				moves[m] = dlminimax(child, !curr_player, curr_depth+1);
+				moves[m][2] = dlminimax(child, !curr_player, curr_depth+1)[2];
 			}
 		}
 	}
@@ -77,8 +74,8 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	}
 	int which_move = rand()%range;
 	int *bestMove = (int *)calloc(sizeof(int), 3);
-	bestMove[0] = tempCols[which_move];
-	bestMove[1] = tempRows[which_move];
+	bestMove[0] = tempRows[which_move];
+	bestMove[1] = tempCols[which_move];
 	bestMove[2] = best;
 	return bestMove;
 }
