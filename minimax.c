@@ -52,41 +52,60 @@ int* dlminimax(Board* b, char curr_player, int curr_depth) {
 	int range = 0;
 	int best;
 	if(curr_player) {
-		best = -100000;
+		/* Max */
+		best = -100000; /* We're trying to go as high as possible. */
 	} else {
-		best = 100000;
+		/* Min */
+		best = 100000; /* They want the opposite. */
 	}
 	/*for(int k=0;k<BRANCHING_FACTOR;k++) {
 		printf("%d %d,%d,%d\t", curr_depth, moves[k][0], moves[k][1], moves[k][2]);
 	}
 	printf("\n");*/
+	/* For each kid. */
 	for(j = 0; j < BRANCHING_FACTOR; j++){
-		if(curr_player) {
-			if(moves[j][2]>best) {
-				range = 0;
-				tempRows[range]=moves[j][0];
-				tempCols[range]=moves[j][1];
-				best = moves[j][2];
-			}
-		} else {
-			if(moves[j][2]<best){
-				range = 0;
-				tempRows[range]=moves[j][0];
-				tempCols[range]=moves[j][1];
-				best = moves[j][2];
-			}
+		/* If it's not pruned, we're choosing, and we have a value greater than max. */
+		if(curr_player && moves[j][2] > best){
+			/* This is the new first element of our best moves. */
+			range = 0; /* So our range of operation is resitricted when choosing a number randomly. */
+			/* Store the position of this new element in temporary holders. */
+			tempRows[range]=moves[j][0];
+			tempCols[range]=moves[j][1];
+			/* Set as new best. */
+			best = moves[j][2];
+		} 
+		/* Otherwise we're the other player and we're trying to minimize. */
+		else if(!curr_player && moves[j][2] < best){
+			/* If we've found a value lower than the current lowest. */
+			range = 0; /* Set operational range to first index. */
+			/* Store the location of this new low into our temps. */
+			tempRows[range]=moves[j][0];
+			tempCols[range]=moves[j][1];
+			/* Set best to new best. */
+			best = moves[j][2];
 		}
-		if(moves[j][2]==best) {
+		/* If we're either the max or min and our best move isn't better. */
+		else if(moves[j][2] == best) {
+			/* Increase the operation range of the random. */
 			range++;
+			/* Store that value next to the other largest number. */
 			tempRows[range]=moves[j][0];
 			tempCols[range]=moves[j][1];
 		}
+		/* Nothing new to report, just continue. */
+		else{
+			continue ;
+		}
 	}
+	/* Now pick a random index across the operational range. */
 	int which_move = rand()%range;
+	/* Grab a new best move to return. */
 	int *bestMove = (int *)calloc(sizeof(int), 3);
+	/* Move temp values at random index into best move. */
 	bestMove[0] = tempRows[which_move];
 	bestMove[1] = tempCols[which_move];
 	bestMove[2] = best;
+	/* Return a best move. */
 	return bestMove;
 }
 
