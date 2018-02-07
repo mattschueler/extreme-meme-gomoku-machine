@@ -58,11 +58,7 @@ int* dlminimax(Board* b, char curr_player, int curr_depth) {
 		/* Min */
 		best = 100000; /* They want the opposite. */
 	}
-	/*for(int k=0;k<BRANCHING_FACTOR;k++) {
-		printf("%d %d,%d,%d\t", curr_depth, moves[k][0], moves[k][1], moves[k][2]);
-	}
-	printf("\n");*/
-	/* For each kid. */
+	
 	for(j = 0; j < BRANCHING_FACTOR; j++){
 		/* If it's not pruned, we're choosing, and we have a value greater than max. */
 		if(curr_player && moves[j][2] > best){
@@ -73,7 +69,7 @@ int* dlminimax(Board* b, char curr_player, int curr_depth) {
 			tempCols[range]=moves[j][1];
 			/* Set as new best. */
 			best = moves[j][2];
-		} 
+		}
 		/* Otherwise we're the other player and we're trying to minimize. */
 		else if(!curr_player && moves[j][2] < best){
 			/* If we've found a value lower than the current lowest. */
