@@ -2,8 +2,18 @@
 #define MINIMAX
 #include "minimax.h"
 
+Board *to_free[999];
+int to_freec = 0;
+
+void cleanup(){
+	int i = 0;
+	for(i=0;i<to_freec;i++){
+		free(to_free[i]);
+	}
+}
+
 // curr_player = 1 is us, = 0 is enemy
-int* dlminimax(struct Board b, char curr_player, int curr_depth) {
+int* dlminimax(Board* b, char curr_player, int curr_depth) {
 	int **moves = calloc(sizeof(int *),BRANCHING_FACTOR); /* For any minimax state we have a set of children to explore */
 	int i;
 	/* For a buffer of 10 moves, set them equal to presets. */
@@ -22,14 +32,14 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	if(curr_depth <= MAX_DEPTH) {
 		int m;
 		/* For each of these moves. */
-		if(!(b.dont)){ /* If not pruned. */
+		if(!(b->dont)){ /* If not pruned. */
 			for( m = 0; m < BRANCHING_FACTOR ; m++) {
 				/* Creat a child on the board. */
-				struct Board child = haveChild(b);
+				Board* child = haveChild(b);
 				/* Set the location of the move to a tile of the current player. */
-				child.board[moves[m][0]][moves[m][1]] = curr_player ? we_are : enemy_is;
+				child->board[moves[m][0]][moves[m][1]] = curr_player ? we_are : enemy_is;
 				/* Assign weights in the child board w/ new move added. */
-				assign_weights(&child);
+				assign_weights(child);
 				/* Recursively call this function on the child. */
 				moves[m][2] = dlminimax(child, !curr_player, curr_depth+1)[2];
 			}
@@ -80,14 +90,14 @@ int* dlminimax(struct Board b, char curr_player, int curr_depth) {
 	return bestMove;
 }
 
-void getBestMoves(struct Board b, int **moves, int curr_player) {
+void getBestMoves(Board* b, int **moves, int curr_player) {
 	int i, j, k, l;
 	for(i=0; i<BOARD_SIZE; i++) {
 		for(j=0; j<BOARD_SIZE; j++) {
-			if(b.board[i][j]==EMPTY) {
+			if(b->board[i][j]==EMPTY) {
 				for(k=0; k<BRANCHING_FACTOR; k++) {
 					if(curr_player) {
-						if(b.weights[i][j]>moves[k][2]) {
+						if(b->weights[i][j]>moves[k][2]) {
 							for(l=BRANCHING_FACTOR-1; l>k; l--) {
 								moves[l][0] = moves[l-1][0];
 								moves[l][1] = moves[l-1][1];
@@ -95,10 +105,10 @@ void getBestMoves(struct Board b, int **moves, int curr_player) {
 							}
 							moves[k][0] = i;
 							moves[k][1] = j;
-							moves[k][2] = b.weights[i][j];
+							moves[k][2] = b->weights[i][j];
 						}
 					} else {
-						if(b.weights[i][j]<moves[k][2]) {
+						if(b->weights[i][j]<moves[k][2]) {
 							for(l=BRANCHING_FACTOR-1; l>k; l--) {
 								moves[l][0] = moves[l-1][0];
 								moves[l][1] = moves[l-1][1];
@@ -106,7 +116,7 @@ void getBestMoves(struct Board b, int **moves, int curr_player) {
 							}
 							moves[k][0] = i;
 							moves[k][1] = j;
-							moves[k][2] = b.weights[i][j];
+							moves[k][2] = b->weights[i][j];
 						}
 					}
 				}
@@ -115,52 +125,56 @@ void getBestMoves(struct Board b, int **moves, int curr_player) {
 	}
 }
 
-void abEval(struct Board b, int** moves, char curr_player){
+void abEval(Board* b, int** moves, char curr_player){
 	int tempa = moves[0][2]; /* Highest possible value that max can get. */
 	int tempb = moves[0][2] * -1; /* Largest denial min can force on max. */
 	if(we_are == curr_player){
 		/* MAX */
-		if(tempa > b.parent->alpha){
+		if(tempa > b->parent->alpha){
 			/* We have a new alpha. */
-			b.parent->alpha = tempa;
+			b->parent->alpha = tempa;
 		}
 		else{
-			b.dont = 1;
+			b->dont = 1;
 		}
 	}
 	else{
 		/* MIN */
-		if(tempb < b.parent->beta){
-			b.parent->beta = tempb;
+		if(tempb < b->parent->beta){
+			b->parent->beta = tempb;
 		}
 		else{
-			b.dont = 1;
+			b->dont = 1;
 		}
 	}
 	/* Now pass that value up above */
-	if(b.parent != NULL){ /* If there's a parent. */
-		abEval((* b.parent), moves, curr_player);
+	if(b->parent != NULL){ /* If there's a parent. */
+		abEval(b->parent, moves, curr_player);
 	}
 }
 
-struct Board haveChild(struct Board parent) {
+Board* haveChild(struct Board* parent) {
 	/* Initialize baby */
-	struct Board child = {0};
+	Board* child = malloc(sizeof(board));
+	memset(board,'\0',sizeof(Board)); // zero out the board
+
+	to_freec++;
+	to_free[to_freec] = child;
 	/* Set parameters */
-	child.parent = &parent;
-	child.children = NULL;
-	child.alpha = parent.alpha;
-	child.beta = parent.beta;
+	child->parent = parent;
+	child->children = NULL;
+	child->alpha = parent->alpha;
+	child->beta = parent->beta;
 	/* Copy board and weights. */
 	int i, j; /* Iterators. */
 	for(i = 0; i < BOARD_SIZE; i++){
 		for(j = 0; j < BOARD_SIZE; j++){
 			/* One-by-one copy. */
-			child.board[i][j] = parent.board[i][j];
-			child.weights[i][j] = parent.weights[i][j];
+			child->board[i][j] = parent->board[i][j];
+			child->weights[i][j] = parent->weights[i][j];
 		}
 	}
-	child.dont = 0; /* Starts out not pruned. */
+	child->dont = 0; /* Starts out not pruned. */
 	return child;
 }
 #endif

@@ -21,9 +21,7 @@ game: clean main
 	python ./WPI.CS4341/gomoku/referee.py moku enemy
 
 ref:
-	git clone https://github.com/samogden/WPI.CS4341.git arena/temp
-	mv arena/temp/gomoku/* arena
-	rm arena/temp
+	git clone https://github.com/samogden/WPI.CS4341.git
 
 clean:
 	rm -f ./*.o
